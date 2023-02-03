@@ -14,11 +14,11 @@
 \usepackage{hyperref}                           % links for everything
 \usepackage{color}                              % allows for setting in different colors
 \usepackage[autooneside=false,automark]{scrlayer-scrpage} % page-style with "Kolumnentitel" (title of current chapter is displayed at the top)
+\usepackage{amsfonts,amstext,amsmath,amsthm, amssymb} % better math mode (\mathrm and \text) and symbols
 \usepackage[sb]{libertinus}                     % use the font libertinus (needs to be installed from the web)
-\usepackage[slantedGreek]{libertinust1math}     % math mode improvement for libertinus
+%\usepackage[slantedGreek]{libertinust1math}     % math mode improvement for libertinus
 \usepackage{siunitx}                            % physical units setting
 \usepackage{icomma}                             % commas in lists get extra space if needed                        
-\usepackage{amsfonts,amstext,amsmath,amsthm} % better math mode (\mathrm and \text) and symbols
 \usepackage{xspace}                             % works to improve own commands and provides "\xspace"-command, that puts a space if needed
 \usepackage{ifthen}                             % more control over non-obligatory parameters
 \usepackage{titling}                            % get title values as macros
@@ -41,6 +41,8 @@
 \usepackage{physics}                            % bra-ket and more
 \usepackage{nicematrix}                         % label row/cols on matrix
 \usepackage{caption}                            % caption of different environments
+\usepackage{tikz}                               % Abbildungen zeichnen
+    \usetikzlibrary{positioning}
 
 \title{Measurement of Droplets in vapourised fluids using Machine Learning Techniques}
 \author{Jan Claar}
@@ -62,6 +64,21 @@
     \chapter{Introduction}
     \label{sec:introduction}
     \input{general/introduction}
+
+    \chapter{Theory}
+
+    \label{sec:theory}
+    \section{Physics}
+    \label{sec:theory_physics}
+
+    \section{Computer Science}
+    \label{sec:theory_compsci}
+    \input{theory/compsci/basics/basics.tex}
+    \input{theory/compsci/image_segmentation/semanticseg.tex}
+    \input{theory/compsci/training/training.tex}
+
+    \section{Architecures}
+    \label{sec:architectures}
 
     \input{bibliography.tex}
 

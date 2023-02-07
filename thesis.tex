@@ -37,6 +37,7 @@
 \usepackage{minted}                             % nice code highlighting (needs Python Package to compile!!)
 \usepackage{accents}                            % better control over accents
 \usepackage{mathtools}                          % more math control possibilities
+\usepackage{eucal}                              % Different mathcal alphabet
 \usepackage[autostyle=true]{csquotes}           % context-sensitive-quotes -> quotation marks that are set correctly for the context
 \usepackage{physics}                            % bra-ket and more
 \usepackage{nicematrix}                         % label row/cols on matrix
@@ -79,6 +80,9 @@
 
     \chapter{Architectures}
     \label{sec:architectures}
+    \input{architecture/introduction.tex}
+    \input{architecture/unet.tex}
+    \input{architecture/resnet.tex}
 
     \chapter{Techniques used to improve model accuracy}
     \label{sec:techniques}

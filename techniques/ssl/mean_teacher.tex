@@ -19,7 +19,7 @@ Two steps are are used in the Mean Teacher method to still make use of these kin
 
 As mentioned in \ref{sec:training}, augmentation and regularization techniques have the purpose of enabling the model to learn the concept of its target function more broadly, since small variances in the input should still produce a similar output. 
 This can be applied not only when comparing the output of the model to the ground truth, but also when comparing the outputs of the model for the same input data, but different levels of noise. 
-In a sense, if the model has properly learned the correct abstractions, its prediction should be similar, even if the input is slightly different.
+If the model has properly learned the correct abstractions, its prediction should be similar for slightly different inputs, even if for less than perfect outputs.
 What this means concreetly in this case, is that the method uses the teacher to make a prediction on an input without any noise and then computes student predicitons on the same input to which  augmentations have been applied.
 In general, the teacher should have an easier time to predict accurate labels for a sample without noise, so a slightly better approximation of the theoretical correct labels should be produced. 
 A \emph{consistency cost} can then be applied between student and teacher predictions which are then used in the same way as the \emph{classification cost} to update student weights.

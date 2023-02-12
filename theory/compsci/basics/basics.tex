@@ -60,7 +60,7 @@ These neurons are typically organized in \emph{layers} and form, in the case of 
 
 While a single neuron doesn't have the capability to solve complex problems, it has been show that a network with as little as one fully connected hidden layer (all neurons of the previus layer output to all neurons of the following layer) can function as a \emph{universal approximator} for functions between two Euclidean spaces\cite{hornikMultilayerFeedforwardNetworks1989} or indeed any $L^p$-Space\cite{parkMinimumWidthUniversal2020}. This means if there is a mathematical correlation between our desired input and output, so long as both can be represented in these spaces, we can find a neural network that approximates this correlation very well.
 
-While this is an extraordinary finding, modern neural networks often place much more emphasis on the number of layers (depth) than the number of neurons in one layer (width) of a network, hence the terms \emph{deep learning} or \emph{deep neural networks}. However, the size of a networks parameters and with that needs for computational power climbs fast when using many fully connected layers. One tool that enables the use of very deep networks is the \emph{convolutional layer}.
+While this is an extraordinary finding, modern neural networks often place much more emphasis on the number of layers (depth) than the number of neurons in one layer (width) of a network, hence the terms \emph{deep learning} or \emph{deep neural networks}. However, the size of a network's parameters and with that its computational complexity grows fast when using many fully connected layers. One tool that enables the use of very deep networks is the \emph{convolutional layer}.
 
 \paragraph*{Convolutions and convolutional neural networks}
 
@@ -78,7 +78,8 @@ The example seen in Figure \ref*{fig:convolution} shows only one channel and a p
 $$
     \text{out}_j = \sum_{k=1}^{C_\text{in}} K_{k,j} * \text{input}_k
 $$
-where $*$ is the convolution operation. There are other approaches to handle multi channel scenarios, but this is the simplest one and the one employed in the thesis. 
+where $*$ is the convolution operation. There are other approaches to handle multi channel scenarios, but this is the simplest one and the one employed in the thesis.
+Another parameter which is often talked about in the context of convolutions is \emph{stride}, which determines by how many units the kernel is moved over the input in each step. The example shown has a stride of 1, but often, a stride of 2 or more may be used when utilising convolutions to downsample inputs.
 
 Using a convolution layer has several advantages over using fully connected layers. First of all is a reduction in \emph{learnable parameters} (see \ref*{sec:training}) which reduces computational resources required and thereby speeds up training. Secondly it introduces the inductive bias that positionally close data points are correlated and relevant to each other to the model, which is reasonable especially in tasks concerning computer vision. 
 

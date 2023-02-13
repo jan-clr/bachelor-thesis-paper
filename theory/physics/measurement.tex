@@ -1,0 +1,43 @@
+\subsection{Droplet Measurement Techniques}
+\label{sec:measurement_techniques}
+
+For most applications of microparticle aerosols droplet size is a key variable that needs to be controlled precisely for optimum efficacy.
+
+For example, in the case of a drug delivery system, the size of the droplet determines the amount of drugs that are absorbed in the lungs, as well as the locations they are deposited in, with smaller droplets reaching more deeply into the lungs, but releasing a smaller amount of drug per unit surface, while larger droplets are more likely to be deposited in the upper airways, but release a larger amount of drug per unit surface area. \cite{labirisPulmonaryDrugDelivery2003}
+
+THerefore, when developing such a system accurate measurement of the droplet size is essential. There are a number of techniques that can be used to measure the size of a droplet, but most of them have some drawbacks or are not suitable for use in this particular application.
+
+\paragraph{Laser diffraction techniques} make use of the fact that the diffraction angle of light passing a sphere is proportional to the diameter of the sphere, with large particles scattering the light at smaller angles and smaller particles scattering the light at larger angles, according to \emph{Mie theory} for electromagnetic wave scattering.
+
+Devices pass a laser beam through the vapour and record the angular scattering intensity, which is then analyzed to calculate the size of the particles. 
+
+Theoretically, laser diffraction techniques are very accurate and able to measure particles as small as \SI{0.1}{\micro\meter} and have been used to measure SAW atomized particle distributions previously. 
+However, a firm which is in a cooperative relationship with our institute for the purpose of researching SAW atomization has reported inconsistencies in their use of a commercially available device, which is why we have chosen to investigate other techniques.
+Another reason for choosing other techniques is the potentially prohibitive pricing of the laser diffraction devices in this stage of the research.
+
+\paragraph{Phase Doppler Particle Analysis (PDPA)} uses two laser beams that cross each other in a volume with an elipsoidal cross section in which an interference pattern between the lasers is produced, forming fringes of differing light intensity. \cite{hollPARTICLEDEPOSITIONVELOCITIES}
+When a particle passes through the volume, this fringe pattern is scattered, which produces pulses of light called \emph{doppler bursts} that can be picked up by two or more well placed photo detectors.
+Information about the particle can be extracted from the phase difference of the doppler bursts picked up by the different detectors.
+
+PDPA is a very accurate technique, but requires very large and specialized equipment, with commercial devices facing similar drawbacks to laser diffraction devices in terms of price and size.
+
+It is also known to produce inaccurate readings for inhomogenous particles or other disturbances in the measurement envorinment, which requires a more complicated set up.
+
+There are further techniques that can be used to measure the size of a droplet which may or may not be applicable in our case, but where not explored at this point in time. 
+
+\paragraph{Image Analysis} 
+The technique used during research up until this point employs a more pragmatic approach. A high speed camera in combination with a microscoping lens and a parallel light source is used to record images of the aerosolized particles as they are being produced. The images were then analyzed manually using image processing software to determine the size of the particles. While very flexible and easily calibratable, this is an extremely tedious and time consuming process, since each droplet has to be measured individually.
+
+This is the aspect of the research that this thesis aims to improve upon by utilizing machine learning techniques to automate the process of droplet identification and subsequent size measurement.
+
+Using this kind of image analysis method is not unprecedented, as \Citeauthor{sijsDropSizeMeasurement2021} have demonstrated a similar approach, where they use image processing techniques to identify and measure droplets in a similar setup. 
+However, they do not disclose the details of their image processing pipeline, making it unclear if they employ AI models for this purpose. 
+It also appears that they use a different setup, which tends to produce a lot less noise in the images, making the task of identifying and measuring droplets easier.
+The method used in this thesis is therefore more applicable to the kind of images that we are working with, but could be used for the same purpose in a different setup.
+
+\begin{figure}[htbp]
+    \centering
+    \makebox[\textwidth][c]{\includegraphics[width=\textwidth]{example-image-a}}
+    \caption{Image of the measurement setup.}
+    \label{fig:setup}
+\end{figure}

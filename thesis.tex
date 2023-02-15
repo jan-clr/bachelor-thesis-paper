@@ -42,6 +42,7 @@
 \usepackage{physics}                            % bra-ket and more
 \usepackage{nicematrix}                         % label row/cols on matrix
 \usepackage{caption}                            % caption of different environments
+\usepackage{subcaption}                         % subcaptions for figures
 \usepackage{tikz}                               % Abbildungen zeichnen
     \usetikzlibrary{positioning}
 
@@ -94,6 +95,13 @@
     \input{techniques/introduction.tex}
     \input{techniques/transfer_learning/transfer_learning.tex}
     \input{techniques/ssl/mean_teacher.tex}
+
+    \chapter{Droplet detection}
+    \label{sec:detection}
+    \input{detection/droplet_detection.tex}
+
+    \chapter{Experiments and Results}
+    \label{sec:experiments}
 
     \input{bibliography.tex}
 

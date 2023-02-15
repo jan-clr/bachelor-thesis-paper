@@ -1,0 +1,118 @@
+Before discussing the experiments conducted in this work, it is important to understand in which context the final model will be used to process experimental data. As well as the limitations of the model and the experimental setup.
+
+\section{Detection and measurement algorithm}
+\label{sec:algorithm}
+
+The measurement process consists of several steps, each employing different measures to improve meaurement accuracy and reduce computation time.
+
+\paragraph{Step 1: Image normalization} is done on the raw image data. This step is done to improve visibility of the droplets in the image and make a first guess as to which images actually contain droplets. 
+The normalization is done batched by calculating the mean image $\mathbf{m}\in\mathbb{R}^{H\times W}$ as well as the mean greyscale value $\mu\in\mathbb{R}$ of the batch $\mathbf{B}\in\mathbb{R}^{N\times H\times W}$, substracting $\mathbf{m}$ from each image in the batch, adding $\mu$ to each pixel and then mapping the resulting values to the interval $[0,255]$.
+This process must be done batched because of memory constraints, but batching the images also has the advantage that images in one batch are more likely to be similar to each other in terms of lighting conditions, which makes the output more consistent.
+
+The mean image subtraction is done to remove camera and lens artifacts such as hot pixels or dust from the images.
+This is not primarily done to improve the models detection accuracy, but in order to filter out images that are not suitable for further processing.
+The metric for deciding if an image contains any strucure that could be a droplet is the \emph{Michelson contrast}, which is defined as 
+$$
+    C = \frac{I_\text{max}-I_\text{min}}{I_\text{max}+I_\text{min}},
+$$
+where $I_\text{max}$ and $I_\text{min}$ are the maximum and minimum luminance values in the image.
+Images aren't considered for further processing if $C$ is below a certain threshold.
+The reason artifacts need to be removed is that the they are very dark compared to the background, which means even images without any droplet structures will have a high Michelson contrast.
+
+\paragraph{Step 2: Droplet detection} is done by a model trained to identify droplets with dark borders and bright centers as in focus and segment the images into three classes, \emph{droplet border}, \emph{droplet inside} and \emph{background}.
+Segmenting the images into three classes instead of two is important in the next step, since it helps to detect errors the model made in the segmentation process.
+
+Details on model training and evaluation can be found in \ref{sec:experiments}.
+
+\paragraph{Step 3: Droplet measurement} is done by first using the \mintinline{python}{label()} from the \mintinline{python}{skimage.measure} library to differentiate between every connected area labeled as \emph{droplet border} in the segmented image. 
+As a first filtering step, all areas that are smaller than a certain threshold are discarded, since no droplets below a certain size can be expected to fit the criteria for being in focus.
+For each remaining area, the locations of all pixels is averaged to locate the center of the droplet.
+Since the droplet is approximately circular, the average distance of all pixels from the center is calculated and used as a measure for the radius of the droplet.
+Because the border of the droplet has a certain width and sometimes extends beyond the actual droplet, only the values between the 85th and 95th percentile of the distances are used to calculate the radius.
+
+\section{Common problems and limitations}
+\label{sec:limitations}
+
+The model used to segment the image is not perfect, which means that sometimes areas which do not belong to a droplet are labeled as \emph{droplet border} or \emph{droplet inside} or the model fails to detect a droplet that is actually present in the image.
+In this section, the most common errors are discussed and possible solutions are proposed, some of which are implemented already.
+
+\paragraph{The model labels an out of focus droplet or other noise partially with border and center labels.}
+\label{sec:partially_wrong}
+This is the most common error observed when applying the model to experimental data examples for which can be seen in \ref{fig:partially_wrong}.
+The model will assign a border label to the dark pixels of an out of focus droplet or a center label to brighter areas of the image that are not part of a droplet, possibly even both for the same structure.
+However, this will very rarely happen in a way in which the border region completely surrounds the center region in a closed shape, which can be used to filter out these errors.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tabular}{ll}
+        \includegraphics[width=0.4\textwidth]{images/bad1.png}
+        &
+        \includegraphics[width=0.35\textwidth]{images/bad2.png}
+    \end{tabular}
+    \caption{Example images showing a labeling error as described in \ref{sec:partially_wrong}. Blue pixels represent \emph{droplet border} labels, and pink pixels represent \emph{droplet inside} labels.}
+    \label{fig:partially_wrong}
+\end{figure}
+
+Training the model to assign two different labels for the droplets instead of one allows the criterium of droplets having a closed border around a center region to be used not only during training, but also after segmentation.
+To check if a border area such as the ones described in Figure~\ref{sec:algorithm} fullfills this criterium, the algorithm calculates its \emph{alpha shape} and then checks if any of the pixels inside the shape are labeled as \emph{droplet inside}.
+
+The alpha shape of a set of points is a generalization of their \emph{convex hull} and for a real number $\alpha$ includes all edges between the points for which a \emph{generalized disk} with radius $\frac{1}{\alpha}$ can be drawn so that the points of the edge lie on its border and the disk contains no other points. For $\alpha=0$, the generalized disk becomes a half-plane and the alpha shape is equivalent to the convex hull. In the code, the alpha shape is calculated using the \mintinline{python}{alphashape()} function from the \mintinline{python}{alphashape} package, which first calculates the \emph{Delaunay triangulation} of the points and then uses the criterium described above to determine which edges to include in the shape. The parameter $\alpha = 1$ is used since the pixel coordinates are discrete and the pixels are directly adjacent to each other. 
+
+This method of filtering works very well for any but the most extreme cases and improves the accuracy of the measuring process significantly.
+
+\paragraph{The model labels an out of focus droplet or other noise completely with border and center labels.}
+
+This is a much rarer error than the one described in the previous paragraph, but it can still happen. 
+It is mostly encountered when the image is very dark overall, which ironically causes the normalization step described in \ref{sec:algorithm} to produce bright artifacts in such images, instead of removing dark spots. 
+One example such an image can be seen in Figure~\ref{fig:totally_wrong_a}.
+Since identifies in focus droplets by their bright center, this behaviour is not completely unexpected.
+
+However, very rarely the model will assign a false positive even to an area which is not significantly brighter than the background, as can be seen in Figure~\ref{fig:totally_wrong_b}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{\textwidth}
+        \makebox[\textwidth][c]{
+            \begin{tabular}{ll}
+                \includegraphics[width=0.45\textwidth]{images/bad4_pic.png}
+                &
+                \includegraphics[width=0.45\textwidth]{images/bad4_mask.png}
+            \end{tabular}
+        }
+        \caption{The model identifying bright artifacts in dark images as droplets. Note that only bottom left and top right labels are fully closed shapes, which can't be filtered out.}
+        \label{fig:totally_wrong_a}
+    \end{subfigure}
+    \begin{subfigure}{\textwidth}
+        \makebox[\textwidth][c]{
+            \begin{tabular}{ll}
+                \includegraphics[width=0.45\textwidth]{images/bad3_pic.png}
+                &
+                \includegraphics[width=0.45\textwidth]{images/bad3_mask.png}
+            \end{tabular}
+        }
+        \caption{The model indentifying a comparatively brighter spot as a droplet.}
+        \label{fig:totally_wrong_b}
+    \end{subfigure}
+    \vspace{0.2cm}
+    \caption{Examples for cases where the model confidently labels an out of focus droplet or other noise completely with border and center labels. The left image shows the original image, the right image shows the segmentation mask. Blue pixels represent \emph{droplet border} labels, and pink pixels represent \emph{droplet inside} labels.}
+    \label{fig:totally_wrong}
+\end{figure}
+
+This kind of error is much more severe, since there aren't any criteria to differentiate these kinds of false positives from the structure of the actual droplet labels.
+Thus, the only way to mitigate this that comes to mind are improving image preprocessing and/or training the model differently to not make these kinds of mistakes.
+
+One idea to improve the preprocessing is to use a different technique for removing the artifacts. 
+The current method of removing the artifacts by subtracting the background image from the original image is very simple and works well if the images in the batch are similar in brightness, but it is not very robust to outliers.
+A different approach then, would be to use the background image as a mask for identifying artifact locations instead, and overwrite the pixels in the original image with a more appropriate value. 
+This could either be the mean brightness of each individual image, or the values at the same pixel location in the original image with a gaussian blur applied to it.
+A process like this could help in minimizing bright artifacts, which seem to be the main cause of this kind of error.
+
+To instead make the model more robust to these kinds of artifacts, some kind of data augmentation could be used that mimics the effect of the artifacts, such as \emph{salt-and-pepper/binary noise}. Another option would be to explicitly use additional samples of images the model seems to find difficult to classify correctly, such as the ones shown in Figure~\ref{fig:totally_wrong}. These examples would need to be labeled of course, but could potentially improve the model substantially in this regard.
+
+\paragraph{In focus criteria may be unrepresentative of actual in focus droplets.} Instead of an error observed in the measuring process, this is a potential problem with the method itself.
+Which droplets are considered in focus and should be included in the measurement is a key aspect of the process, since data has to be labeled accordingly. Structures with extremely sharp corners are exceedingly rare in the data captured by the experimental setup, which is why \Citeauthor{kapplAkustischInduzierteVernebelung2022}\cite{kapplAkustischInduzierteVernebelung2022} argues that structures with a dark border and a bright center should be considered sufficiently in focus.
+
+The reasoning behind this is that light that passes through the outer areas of the droplet is scattered more strongly, resulting in less light reaching the camera, while light that passes through the center of the droplet passes through straight, with beams near the center even being focused slightly.
+
+The success of the method as a measurement technique depends heavily on the veracity of this assumption. 
+However, if in the future, other criteriums are found to be more suitable to differentiate between in focus and out of focus droplets, the method could theoretically be adapted to use those instead.

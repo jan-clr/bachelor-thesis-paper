@@ -35,7 +35,6 @@
 \usepackage{floatpag}                           % make it possible for float-pages to not have a page number
 \usepackage{url}                                % sometimes needed by biblatex, technically no longer needed
 \usepackage{minted}                             % nice code highlighting (needs Python Package to compile!!)
-\usepackage{accents}                            % better control over accents
 \usepackage{mathtools}                          % more math control possibilities
 \usepackage{eucal}                              % Different mathcal alphabet
 \usepackage[autostyle=true]{csquotes}           % context-sensitive-quotes -> quotation marks that are set correctly for the context
@@ -99,9 +98,11 @@
     \chapter{Droplet detection}
     \label{sec:detection}
     \input{detection/droplet_detection.tex}
+    \input{detection/setup.tex}
 
     \chapter{Experiments and Results}
     \label{sec:experiments}
+    \input{experiments/introduction.tex}
 
     \input{bibliography.tex}
 

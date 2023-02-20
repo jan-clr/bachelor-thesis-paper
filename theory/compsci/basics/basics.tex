@@ -47,7 +47,7 @@ The perceptron displayed in \ref*{fig:perceptron} computes its output like
 $$
     o = f\left(w_o + \sum_{i} w_i x_i\right)
 $$
-where $f$ is the activation function, which is some derivable nonlinear function. State of the art networks use mostly the \emph{Rectified Linear Unit} (ReLU) as their activation function, which has proven to be preferable to its predecessor, the sigmoid function, and is computed as such:
+where $f$ is the activation function, which is some differentiable nonlinear function. State of the art networks use mostly the \emph{Rectified Linear Unit} (ReLU) as their activation function, which has proven to be preferable to its predecessor, the sigmoid function, and is computed as such:
 $$
     \text{ReLU}(x) = \begin{cases}
         x, &x>0\\

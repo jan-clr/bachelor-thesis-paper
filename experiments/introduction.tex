@@ -1,4 +1,45 @@
-Several techniques are explored during model training in the hopes of improving the detection detection and measurement performance. 
+Several techniques are explored during model training in the hopes of improving the detection and measurement performance as well as how the model generalizes. 
 This section evaluates the results of these experiments and discusses their effectiveness.
 
-All learning is done in the \emph{pytorch} frame
+Before discussing specific experiments, the general training and evaluation environment will described.
+
+\paragraph*{Training and Evaluation Setup}
+All learning is done using the \emph{pytorch}\cite{paszkePyTorchImperativeStyle2019a} framework.
+
+Where applicable, techniques were tested on the \emph{Cityscapes}\cite{cordtsCityscapesDatasetSemantic2016a} dataset, which contains 3000 images with pixel-level annotations of 30 different classes, 19 of which were used during training and evaluation.
+Since the annotations for the Cityscapes test set are not public, models trained on this dataset are only evaluated based on their performance on the validation data. 
+
+The training data for the target dataset contains image data recorded using the setup described in \ref{sec:setup} with three different sets of imaging and droplet generation parameters. The data is annotated with three classes, namely \emph{droplet inside}, \emph{droplet outside} and \emph{background}. Annotation was performed with the Software \emph{CVAT}\cite{CVAT_ai_Corporation_Computer_Vision_Annotation_2022}.
+
+The test set for the vapour data contains 35 images from different experiments, which were not used during training. The images in the test set are carefully selected to cover a wide range of droplet sizes and clarity as well as different overall lighting conditions. It also deliberately includes images with a lot of artifacts and noise that are observed to commonly cause problems for the model (see \ref{sec:limitations}) as well as images with no droplets at all.
+
+The loss function used for training is the \emph{cross entropy loss} which is defined as:
+\begin{equation*}
+    \ell_{i, j} = -\log\hat{y}_{i, j, y_{i, j}}\quad,
+\end{equation*}
+where $\hat{y} \in \mathbb{R}^{M \times N \times C}$ are the predicted class probabilities, $y \in \mathbb{N}^{N \times M}$ is the ground truth class label and $C$ is the number of classes. The loss is averaged over all pixels \cite{CrossEntropyLossPyTorch13}.
+\begin{equation*}
+    \mathcal{L}(y, \hat{y}) = \frac{1}{MN} \sum_{i=1}^M \sum_{j=1}^N \ell_{i, j}
+\end{equation*}
+The class probabilities are calculated from the logit outputs $o$ of the model using the \emph{softmax} function:
+\begin{equation*}
+    \hat{y}_{i, j, c} = \frac{\exp(o_{i, j, c})}{\sum_{k=1}^C \exp(o_{i, j, k})}\quad.
+\end{equation*}
+
+The main metric used for evaluating the performance of the model is the \emph{mean intersection over union} (mIoU, see \ref{sec:imseg}), which is calculated by accumulating the intersection and union for each class over the whole data set, calculating the class-wise IoU and then averaging the results over the number of classes.  
+
+For training on the vapour dataset, additional metrics can be calculated which may better reflect the models performance in its intended application. To do that, the measurement algorithm is applied to both the predicted and ground truth segmentation masks. Predicted droplets are considered to be correctly detected if their center is within a the area of a ground truth droplet, which is precise enough because the droplets are generally very sparsely distributed.
+The additional metrics calculated from this information are 
+\begin{itemize}
+    \item \emph{Precision}: The fraction of detected droplets (P) that are actually present in the image (TP). $$\frac{\text{TP}}{\text{P}}$$
+    \item \emph{Recall}: The fraction of actual droplets (= T) that are detected. $$\frac{\text{TP}}{\text{T}}$$
+    \item \emph{Relative Mean Radius Error} (RMRE): The relative difference between the predicted and ground truth average droplet radius (ADR). $$\frac{\text{ADR}_\text{pred}}{\text{ADR}_\text{truth}}$$
+    This is calculated considering only the droplets that are detected in both the ground truth and the prediction (RMRE$_\text{c}$) as well as all droplets that are present in the ground truth (RMRE$_\text{t}$).
+\end{itemize}
+Unless stated otherwise, all metrics are calculated for the test set of the vapour dataset.
+
+All training uses \emph{early stopping} to determine the end of training. The model is trained for as long as the improvement in the evaluation metric (mIoU) is significant. Improvement is considered stagnant if the metric doesn't surpass its best value by at least a certain \emph{minimum delta} within a certain number of \emph{patience} epochs. Patience and minimum delta are generally set to 30 and \num{1e-4} respectively.
+
+Additionally, the model is trained using a \emph{learning rate scheduler} which reduces the learning rate by a certain factor if the improvement in the evaluation metric is not significant for a certain number of epochs. The idea behind this is that initially a higher learning rate is beneficial to avoid getting stuck in local minima. However, in later stages of training the model may aleady be close to a global minimum and a higher learning rate may cause it to overshoot the minimum, so lowering the learning rate helps to avoid this. The scheduling process used in this thesis is called \emph{ReduceLROnPlateau}. There are more sophisticated approaches to scheduling, however the ReduceLROnPlateau scheduler achieves good results in this case and is easy to implement without knowing the exact number of epochs that will be needed for training.
+
+Unless otherwise stated the model architecture is always a U-Net with a ResNet34D pretrained on ImageNet data as its encoder.

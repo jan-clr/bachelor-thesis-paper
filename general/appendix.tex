@@ -1,0 +1,25 @@
+\chapter{Abbreviations}
+{
+    \renewcommand*{\arraystretch}{1.1}
+    \begin{table}[htbp]
+        \centering
+        \begin{tabular}{rp{0.6\textwidth}} 
+            \toprule
+            Abbreviation & Meaning\\
+            \midrule 
+            (D/F)CNN & (Deep-/Fully-) Convolutional Neural Network; a (deep) neural network that (only) includes convolutional layers in its main path\\
+            lr & learning rate\\
+            lrsp & learning rate scheduler patience\\
+            lrsf & \linespread{1.0}\selectfont learning rate scheduler factor; the number the learning rate is multiplied by in case the scheduler detects stagnant progress\\
+            bs, bsize & batch size\\
+            lbls & labeled samples \\
+            MT & Mean Teacher \\
+            EMA & Exponential Moving Average \\
+            sf & \linespread{1.0}\selectfont split factor; the number the height and width of the images and masks in the dataset are divided by for splitting them into smaller samples\\
+            \bottomrule
+        \end{tabular}
+        \vspace{0.1cm}
+        \caption{A list of abbreviations used in this thesis. The table explains the full meaning of each abbreviation as well as a short description if it is not obvious.}
+        \label{tab:abbreviations}
+    \end{table}
+}

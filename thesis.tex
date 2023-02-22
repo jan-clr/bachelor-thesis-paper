@@ -44,6 +44,7 @@
 \usepackage{subcaption}                         % subcaptions for figures
 \usepackage{tikz}                               % Abbildungen zeichnen
     \usetikzlibrary{positioning}
+\usepackage[toc, page]{appendix}
 
 \title{Measurement of Droplets in vapourised fluids using Machine Learning Techniques}
 \author{Jan Claar}
@@ -103,7 +104,12 @@
     \chapter{Experiments and Results}
     \label{sec:experiments}
     \input{experiments/introduction.tex}
+    \input{experiments/mean_teacher_general.tex}
 
     \input{bibliography.tex}
+
+    \begin{appendices}
+        \input{general/appendix.tex}
+    \end{appendices}
 
 \end{document}

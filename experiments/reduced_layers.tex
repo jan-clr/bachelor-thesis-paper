@@ -1,0 +1,19 @@
+\section{Training with reduced layers}
+\label{sec:reduced_layers}
+
+The architecture of the model presented in chapter \ref{sec:architectures} has five distinct downsampling and upsampling stages in its encoder and decoder paths respectively.
+The stated purpose of the lower layers is to be able to utilize more contextual information since neurons in lower layers have a larger \emph{receptive field} than neurons in higher layers.
+
+However, for our specific problem, objects are generally quite small  and the problem itself isn't very complex, so the contextual information provided by the lower layers might not be as useful as it is for larger objects.
+Additionally, including the lower layers may not only be unneccessary, but also detrimental to the performance of the model, since it increases the number of parameters and with that the computational complexity, which makes it harder to train. 
+This also plays a role in the demand for computational resources during training and inference, since even only omitting the deepest layers reduces the trainable parameter count from 24.5\,M to 9.1\,M.
+
+To explore this hypothesis, the model is trained on the vapour dataset with the encoder and decoder paths reduced to only three stages each besides the input and output stage (final encoder stride is 8 instead of 16). The model is then evaluated as normal.
+
+Because of time constraints, pretraining the reduced model on the Cityscapes dataset was not attempted, however since the Cityscapes dataset is much more complex than our own, it is unlikely the model would have achieved good results on it in the first place.
+
+The experiment compares the performance with and without semi supervised learning, with a split factor of 2.
+
+Training parameters are the same as in \ref{sec:mean_teacher_general}.
+
+\paragraph{Results}

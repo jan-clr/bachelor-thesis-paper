@@ -1,0 +1,14 @@
+\section{Binary instead of multi-class segmentation}
+\label{sec:binary}
+
+In \ref{sec:algorithm} it's stated that training the model to segement the image into three different classes helps to filter out common model errors in later stages of the measurement algorithm. 
+However, introducing a third class also makes the problem more difficult to learn. It could be that training the model on only two classes (background and in-focus droplet) would enable the model to avoid the errors in the first place, since it can learn the criterium for a droplet bein in focus more easily.
+
+To test this, the model is trained on the vapour dataset, but with all different droplet labels combined into a single class. The model is then evaluated on the test set that underwent the same transformation. 
+
+During the evaluation process, the filtering step performed by the droplet measurement algorithm is obviously skipped, since the inside labels don't exist anymore. 
+
+Training parameters are the same as in \ref{sec:mean_teacher_general}.
+
+\paragraph{Results}
+

@@ -1,0 +1,11 @@
+\section{Influence of pretraining on the model performance}
+\label{sec:pretraining}
+
+As mentioned in \ref{sec:transfer_learning} besides using a pretrained encoder, the thesis also explores pretraining the whole model on the Cityscapes dataset as a starting point for training on the droplet dataset.
+
+Because the model has already learned some useful features, this could potentially speed up the training process and improve the performance of the model. 
+
+This, the weights of best performing model on Cityscapes (mIoU \num{0.475}) is loaded when starting training, except for the last layer, whose number of output channels is changed to match the number of classes in the droplet dataset.
+
+\paragraph{Results}
+

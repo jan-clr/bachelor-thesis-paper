@@ -1,0 +1,28 @@
+\section{Oversampling to overcome class imbalance}
+\label{sec:oversampling}
+
+Class imbalance is a common problem in many machine learning tasks.
+This is especially true in the case of the underrepresented classes being the most relevant ones, as is the case for the droplets in the vapour dataset.
+The background label makes up \SI{99.914}{\percent} of all labeled pixels in the dataset, while the droplet border and droplet inside labels only make up \SI{0.063}{\percent} and \SI{0.023}{\percent} respectively.
+
+Initially, this extreme unbalance made it impossible to train a model that could detect droplets and the mIoU would stagnate around \num{0.33}, which is the accuracy of a model that always predicts the background class.
+
+One way to combat this imbalance is weighting the loss function of each class inversely proportional to the number of samples in the dataset that belong to that class, to prioritize predicting the underrepresented classes correctly during training. 
+However, perhaps due to the unusually large imbalance, this method did not improve the performance of the model. Using smaller weights than the inverse distributions didn't achieve better results either.
+
+The method that is applied in the thesis to overcome this problem is a form of \emph{oversampling}\cite{mohammedMachineLearningOversampling2020}, where the occurence of the underrepresented classes is artificially increased by showing the model samples that do contain these classes more often.
+Although there are more sophisticated approaches to oversampling \cite{ReviewImbalancedData2017}, the solution used in this thesis is a simple one that is easy to implement, but has proven to be effective.
+
+Since droplets are distributed very sparsely in the data, when splitting the images into smaller samples, a lot of the splits will not contain any droplets. 
+Instead of including these empty regions in the training set, they are discarded when the split images are created.
+Doing this changes the label distribution to \SI{99.84}{\percent} background, \SI{
+0.116}{\percent} droplet border and \SI{0.044}{\percent} droplet inside, which doesn't appear to be much better than the original distribution, but roughly doubles the occurence rate of the droplet classes. 
+This alone is enough to allow the model to learn to detect droplets with good accuracy.
+
+To take this further, instead of splitting the image dimensions by two they could also be split by a larger factor, which would increase the relative density of droplets in the samples even more.
+The results of this are shown in each experiment seperately, since the same split factor might not work well for all approaches.
+No split factors larger than 4 were tested, since images would become very small and split droplets into different samples more often, which might also be detrimental. 
+
+No further comparative studies were conducted to determine the optimal split factor or the best way to apply oversampling, since the results of this simple approach were already good enough to be used in the thesis.
+Oversampling is used in all other experiments, since training on the vapour dataset is impossible without it.
+

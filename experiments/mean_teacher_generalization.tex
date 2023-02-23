@@ -1,0 +1,48 @@
+\section{Mean Teacher for generalization}
+\label{sec:generalization}
+
+Another hope for the MT approach is that it will be able to improve the generalization capabilities of the model. Since different imaging parameters or different SAW devices will produce slightly different images, being able to adapt the model to new parameters without having to label new data would be a huge advantage.
+
+To explore this, two subsets (S1 and S2) of the vapour datasets with different parameters are used to create two new datasets (DS1 and DS2). DS1 contains the labeled samples from S1 as well as samples from S2 with the labels removed. DS2 is built in the same way, but with S2 as the labeled dataset and S1 as the unlabeled dataset.
+
+The model is then trained on one of the two datasets (DS1 or DS2) and evaluated on the validation set of the other dataset (DS2 or DS1), once with only the labeled samples and once with the unlabeled samples using MT. This is repeated for both datasets, so that one model is trained on either dataset. 
+
+To avoid adapting the model purely to one subset, the test set is used for validation during training. 
+
+A similar number of labeled ($\sim 30$) and unlabeled ($\sim 150$) samples are used for each dataset, so that the model is trained on the same number of samples in total.
+
+If including the unlabeled samples from S2 helps the model improve on the test set of S2 compared to only having seen the labeled samples from S1 (and vice versa), it would indicate that the MT method does indeed help the model generalize without new labeled data.
+
+Training parameters are the same as in \ref{sec:mean_teacher_general}.
+
+\paragraph{Results}
+
+The evaluation results are shown in table \ref{tab:generalization}. 
+Unfortunately, the results aren't as conclusive as hoped. 
+While using the unlabeled samples from S1 did help the model improve its mIoU on S1 (results for DS2), the opposite isn't true, with the supervised training on DS1 performing better than the MT training, although not as significantly. 
+Additionally, in both cases the supervised model performs better in all measurement specific metrics except for the recall.
+
+The reason for this could be that the data from S1 is generally more difficult to segment than the data from S2. 
+This could mean that including the easier data from S2 as unlabeled data doesn't really help the model learn new information, while including S1 as unlabeled data (in the case of DS2) actually introduces new concepts to the model.
+As evidence for the higher difficuly of S1, we can point to the mIoU on the Validation set during training being higher for DS1 than for DS2, where S1 samples were labeled.
+
+To further investigate this in the future, we could construct another pair of datasets that achieve more similar scores on the original test set which could mean they are more similar in difficulty. 
+
+As for now, evidence for the MT method's ability to help generalization without new labeled data is inconclusive. 
+
+This doesn't discount the value of the MT method for improving the model in general, but could mean that including new data in the training means having to label a small fraction of it to enable the model to grasp its basic structure, which is still a huge advantage over having to annotate all of it.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{llllllll} 
+        \toprule
+        Set & MT  & Validation mIoU    & Test mIoU        & recall           & precision        & RMRE$_\text{c}$   & RMRE$_\text{t}$   \\ \midrule
+        DS1 & no  & 0.76072          & \textbf{0.71120} & 0.70330          & \textbf{0.94118} & \textbf{-0.05730} & \textbf{-0.05524} \\
+            & yes & \textbf{0.76570} & 0.70605          & \textbf{0.74725} & 0.89474          & -0.11600          & -0.14195          \\
+        DS2 & no  & 0.72521          & 0.67748          & 0.62963          & \textbf{0.94444} & \textbf{-0.18807} & \textbf{-0.17170} \\
+            & yes & \textbf{0.72534} & \textbf{0.71552} & \textbf{0.66667} & 0.85714          & -0.26960          & -0.25511          \\ \bottomrule
+    \end{tabular}
+    \vspace*{0.2cm}
+    \caption{Training Results for the generalization experiments. hyperparameters are omitted. The Set Column indicates which dataset was used for training and evaluation and refers to the sets described in \ref{sec:generalization}. MT indicates whether the MT method was used. Bold values indicate the better result for each metric.}
+    \label{tab:generalization}
+\end{table}

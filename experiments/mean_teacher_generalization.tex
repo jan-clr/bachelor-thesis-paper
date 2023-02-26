@@ -24,7 +24,7 @@ Additionally, in both cases the supervised model performs better in all measurem
 
 The reason for this could be that the data from S1 is generally more difficult to segment than the data from S2. 
 This could mean that including the easier data from S2 as unlabeled data doesn't really help the model learn new information, while including S1 as unlabeled data (in the case of DS2) actually introduces new concepts to the model.
-As evidence for the higher difficuly of S1, we can point to the mIoU on the Validation set during training being higher for DS1 than for DS2, where S1 samples were labeled.
+As evidence for the higher difficulty of S1, we can point to the mIoU on the Validation set during training being higher for DS1 than for DS2, where S1 samples were labeled.
 
 To further investigate this in the future, we could construct another pair of datasets that achieve more similar scores on the original test set which could mean they are more similar in difficulty. 
 
@@ -43,6 +43,6 @@ This doesn't discount the value of the MT method for improving the model in gene
             & yes & \textbf{0.72534} & \textbf{0.71552} & \textbf{0.66667} & 0.85714          & -0.26960          & -0.25511          \\ \bottomrule
     \end{tabular}
     \vspace*{0.2cm}
-    \caption{Training Results for the generalization experiments. hyperparameters are omitted. The Set Column indicates which dataset was used for training and evaluation and refers to the sets described in \ref{sec:generalization}. MT indicates whether the MT method was used. Bold values indicate the better result for each metric.}
+    \caption{Training Results for the generalization experiments. The Set Column indicates which dataset was used for training and evaluation and refers to the sets described in section \ref{sec:generalization}. MT indicates whether the MT method was used. Bold values indicate the better result for each metric.}
     \label{tab:generalization}
 \end{table}

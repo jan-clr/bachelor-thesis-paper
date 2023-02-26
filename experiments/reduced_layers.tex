@@ -1,14 +1,14 @@
 \section{Training with reduced layers}
 \label{sec:reduced_layers}
 
-The architecture of the model presented in chapter \ref{sec:architectures} has five distinct downsampling and upsampling stages in its encoder and decoder paths respectively.
+The architecture of the model described in chapter \ref{sec:architectures} has five distinct downsampling and upsampling stages in its encoder and decoder paths respectively.
 The stated purpose of the lower layers is to be able to utilize more contextual information since neurons in lower layers have a larger \emph{receptive field} than neurons in higher layers.
 
 However, for our specific problem, objects are generally quite small  and the problem itself isn't very complex, so the contextual information provided by the lower layers might not be as useful as it is for larger objects.
-Additionally, including the lower layers may not only be unneccessary, but also detrimental to the performance of the model, since it increases the number of parameters and with that the computational complexity, which makes it harder to train. 
+Additionally, including the lower layers may not only be unnecessary, but also detrimental to the performance of the model, since it increases the number of parameters and with that the computational complexity, which makes it harder to train. 
 This also plays a role in the demand for computational resources during training and inference, since even only omitting the deepest layers reduces the trainable parameter count from 24.5\,M to 9.1\,M.
 
-To explore this hypothesis, the model is trained on the vapour dataset with the encoder and decoder paths reduced to only three stages each besides the input and output stage (final encoder stride is 8 instead of 16). The model is then evaluated as normal.
+To explore this hypothesis, the model is trained on the vapour dataset with the encoder and decoder paths reduced to only four/three stages each (final encoder stride is 16/8 instead of 32). The model is then evaluated as normal.
 
 Because of time constraints, pretraining the reduced model on the Cityscapes dataset was not attempted, however since the Cityscapes dataset is much more complex than our own, it is unlikely the model would have achieved good results on it in the first place.
 
@@ -17,3 +17,37 @@ The experiment compares the performance with and without semi supervised learnin
 Training parameters are the same as in \ref{sec:mean_teacher_general}.
 
 \paragraph{Results}
+
+The results of the experiment are shown in Table~\ref{tab:results_reduced_layers}.
+
+While the complete model still takes the top score when it comes to the mIoU metric (0.784 for supervised training with sf = 2), the top result for the reduced model only lags behind slightly with 0.775 for the same training parameters.
+
+For the semi-supervised training, the reduced model consistently outperforms the complete model at the mIoU metric, with the only exception being the case where the 4-stage model is trained with sf = 4. 
+
+What is most surprising is that this is true not only for the 4-stage model, but also for the 3-stage model, which only contains 1.7\,M trainable parameters.
+While there is a slight drop in performance for 3 stages compared to 4, considering the difference in size between the two models, this is quite impressive.
+
+Unfortunately, it seems the reduced models don't benefit from the MT approach for the RMRE metrics, as was observed in some cases for the complete model.
+
+The best overall result is achieved by the 4-stage model during supervised training with sf = 2, which achieves a mIoU of 0.775 as well as precision and recall values of over 0.95, which is the highest combined accuracy observed.
+
+Since the precision should reflect the actual performance of the model in the application very well, using this configuration for inference seems to be a good choice.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{lllllllll}
+        \toprule
+        \#Stgs./Param. & MT  & sf & Loss             & mIoU             & recall           & precision        & RMRE$_\text{c}$   & RMRE$_\text{t}$   \\ \midrule
+        3 / 1.7\,M       & no  & 2  & 0.00103          & 0.75167          & 0.84667          & 0.97692          & -0.14081          & -0.13211          \\
+                 &     & 4  & 0.00091          & 0.76490          & 0.86667          & 0.97744          & -0.12805          & -0.13039          \\
+                 & yes & 2  & \textbf{0.00068} & 0.76703          & 0.85333          & \textbf{0.99225} & \textbf{-0.09556} & -0.10277          \\
+                 &     & 4  & 0.00123          & 0.76038          & 0.91333          & 0.93197          & -0.10090          & -0.10861          \\ \midrule
+        4 / 9.1\,M        & no  & 2  & 0.00077          & \textbf{0.77552} & 0.95333          & 0.97279          & -0.10466          & \textbf{-0.09549} \\
+                 &     & 4  & 0.00088          & 0.76513          & 0.86000          & 0.94161          & -0.11796          & -0.10821          \\
+                 & yes & 2  & 0.00084          & 0.76889          & 0.88000          & 0.97059          & -0.11428          & -0.11925          \\
+                 &     & 4  & 0.00123          & 0.73325          & \textbf{0.96000} & 0.87805          & -0.10355          & -0.10079          \\ \bottomrule
+        \end{tabular}
+        \vspace{0.2cm}
+    \caption{Evaluation results for models trained with a reduced number of encoder/decoder stages. CowMask is used as the mixing method. For comparison to full scale results refer to Table~\ref{tab:vapour_results_mt}. For abbreviations refer to Table \ref{tab:abbreviations}.}
+    \label{tab:results_reduced_layers}
+\end{table}

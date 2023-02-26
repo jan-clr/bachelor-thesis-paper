@@ -1,7 +1,7 @@
-\section{Influence of pretraining on the model performance}
+\section{Influence of Pretraining on model performance}
 \label{sec:pretraining}
 
-As mentioned in \ref{sec:transfer_learning} besides using a pretrained encoder, the thesis also explores pretraining the whole model on the Cityscapes dataset as a starting point for training on the droplet dataset.
+As mentioned in section \ref{sec:transfer_learning}, besides using a pretrained encoder, the thesis also explores pretraining the whole model on the Cityscapes dataset as a starting point for training on the droplet dataset.
 
 Because the model has already learned some useful features, this could potentially speed up the training process and improve the performance of the model. 
 
@@ -9,3 +9,29 @@ This, the weights of best performing model on Cityscapes (mIoU \num{0.475}) is l
 
 \paragraph{Results}
 
+Pretraining the model on Cityscapes seems to have the largest impact on the performance of supervised training with a split factor of 2, while only improving the results of semi supervised training by a small margin.
+
+For supervised training with a split factor of 4 as well as for MT + CutMix, the performance is even worse than the non pretrained model.
+
+Since the majority of the computational complexity of the model comes from the encoder, it is perhaps not surprising that pretraining on Cityscapes doesn't improve the performance a lot. 
+Even if the whole model isn't pretrained, the encoder still uses ImageNet weights, which are already quite good. 
+
+During Cityscapes pretraining, the decoder might even learn features that are not useful or even detrimental for training on the droplet dataset.
+However, if this is the case, it is unclear as to why this only happens for supervised training with a split factor of 4 and MT + CutMix.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{llllllll}
+        \toprule
+        MT            & sf & Loss             & mIoU             & recall           & precision        & RMRE$_\text{c}$   & RMRE$_\text{t}$   \\ \midrule
+no            & 2  & \textbf{0.00068} & \textbf{0.78370} & 0.88667          & \textbf{0.97080} & \textbf{-0.09096} & -0.08740          \\
+              & 4  & 0.00092          & 0.75218          & 0.83333          & 0.96154          & -0.11241          & -0.11096          \\ \midrule
+yes (CowMask) & 2  & 0.00082          & 0.75358          & \textbf{0.98667} & 0.91358          & -0.09818          & \textbf{-0.08481} \\
+              & 4  & 0.00083          & 0.75835          & 0.94667          & 0.93421          & -0.10643          & -0.11527          \\ \midrule
+yes (CutMix)  & 2  & 0.01043          & 0.65301          & 0.90000          & 0.95745          & -0.10438          & -0.10716          \\
+        \bottomrule
+        \end{tabular}
+    \vspace{0.2cm}
+    \caption{Results of the pretraining experiment. All training is done by starting training with weights pretrained on Cityscapes. For comparison with non pretrained models refer to Table~\ref{tab:vapour_results_mt}.}
+    \label{tab:pretraining}
+\end{table}

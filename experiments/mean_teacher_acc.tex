@@ -16,7 +16,7 @@ The teacher is updated using an EMA with a decay $\alpha$ of \num{0.996}.
 
 For the baseline model, the best results are achieved by using an initial learning rate of \num{1e-4} with a batch size of 16, a scheduler patience of 20 epochs and a reduction factor of \num{0.5}. 
 
-The baseline model is trained on 100 labeled samples from the training set, while the mean teacher model is trained on the same 100 lableled samples plus all other samples from the training set as unlabeled samples.
+The baseline model is trained on 100 labeled samples from the training set, while the mean teacher model is trained on the same 100 labeled samples plus all other samples from the training set as unlabeled samples.
 A training epoch when using MT is considered to be finished when the model has seen all unlabeled samples once, with the labeled samples being seen as many times as necessary to fill the batch size. This means epochs for MT training contain considerably more samples than epochs for baseline training, which is why the patience value for baseline training is higher.
 
 For the baseline model, the augmentation pipeline consists of a random \numproduct{224 x 224} crop, a random translation, scaling and rotation with a probability of \num{0.5}, a RGB-shift with a probability of \num{0.5} and a random variation of the image brightness and contrast with a probability of \num{0.5}.  
@@ -42,7 +42,7 @@ However, this improvement is only achievable within a very small space of hyperp
 This deterioration in performance can likely be attributed to very poor pseudo label quality. As \citeauthor{schererPseudoLabelNoiseSuppression2022}\cite{schererPseudoLabelNoiseSuppression2022} discovered in their analysis of \emph{pseudo label filtering} techniques, pseudo labels with poor quality have a detrimental effect on final model performance.
 Since the setup used in this thesis doesn't achieve very high performance on the Cityscapes dataset as is, even when using all labeled samples (mIoU of \num{0.475}), it stands to reason that label quality may hurt the training process if hyperparameters are suboptimal.
 
-Nonetheless, the results of this experiment show that the MT approach is able to improve the performance of the model. With the supervised performance on the target dataset being signifcantly better than on the Cityscapes dataset, it is likely that the MT approach will be able to improve the performance of the model on the vapour dataset as well.
+Nonetheless, the results of this experiment show that the MT approach is able to improve the performance of the model. With the supervised performance on the target dataset being significantly better than on the Cityscapes dataset, it is likely that the MT approach will be able to improve the performance of the model on the vapour dataset as well.
 
 For a more comprehensive overview of training results, see Table \ref{tab:cityscapes_results_mt}.
 
@@ -50,16 +50,14 @@ For a more comprehensive overview of training results, see Table \ref{tab:citysc
     \centering
     \begin{tabular}{llllllllrr}
         \toprule
-        \multicolumn{9}{l}{Cityscpapes Training}\\  
-        \midrule
-        Approach & \#lbls & lr & bsize & lrsf & lrsp & Dropout & $\alpha$ & Loss &
+        MT & \#lbls & lr & bsize & lrsf & lrsp & Dropout & $\alpha$ & Loss &
         mIoU \\
         \midrule 
-        Baseline & all & $0.0001$ & $16$ & $0.5$ & $10$ & - & - & $0.216$ & $0.475$ \\
-        MT & 100 & $0.001$ & $16$ & $0.1$ & $5$ & \num{0.5} & \num{0.996} & $0.644$ & $\mathbf{0.426}$ \\
-        MT & 100 & $0.001$ & $16$ & $0.1$ & $5$ & \num{0.4} & \num{0.996} & $0.559$ & $0.412$ \\
-        Baseline & 100 & $0.0001$ & $16$ & $0.5$ & $30$ & \num{0.2} & - & $0.444$ & $0.349$ \\
-        Baseline & 100 & $0.0001$ & $16$ & $0.5$ & $30$ & - & - & $0.469$ & $0.331$ \\
+        no & all & $0.0001$ & $16$ & $0.5$ & $10$ & - & - & $0.216$ & $0.475$ \\ \midrule
+        yes & 100 & $0.001$ & $16$ & $0.1$ & $5$ & \num{0.5} & \num{0.996} & $0.644$ & $\mathbf{0.426}$ \\
+        yes & 100 & $0.001$ & $16$ & $0.1$ & $5$ & \num{0.4} & \num{0.996} & $0.559$ & $0.412$ \\
+        no & 100 & $0.0001$ & $16$ & $0.5$ & $30$ & \num{0.2} & - & $0.444$ & $0.349$ \\
+        no & 100 & $0.0001$ & $16$ & $0.5$ & $30$ & - & - & $0.469$ & $0.331$ \\
         \bottomrule
     \end{tabular}
     \vspace{0.1cm}
@@ -68,13 +66,52 @@ For a more comprehensive overview of training results, see Table \ref{tab:citysc
 \end{table}
 
 \paragraph{Setup on vapour dataset}
-The training setup for the vapour dataset is very similar to the Cityscapes setup, with the images being split in half along the vartical and horizontal axis and these 4 segments being used as seperate samples. The decision to split the images instead of resizing them was made because the relevant objects in the images are already quite small, so resizing them might make it impossible to detect some of them. This leaves us with \qtyproduct{640 x 512}{\pixel} images, which necessitated lowering the batch size to 12 for baseline training and 8 (2 labeled, 6 unlabeled) for MT training.
+The training setup for the vapour dataset is very similar to the Cityscapes setup, with the images being split in half along the vertical and horizontal axis and these 4 segments being used as separate samples. The decision to split the images instead of resizing them was made because the relevant objects in the images are already quite small, so resizing them might make it impossible to detect some of them. This leaves us with \qtyproduct{640 x 512}{\pixel} images, which necessitated lowering the batch size to 12 for baseline training and 8 (2 labeled, 6 unlabeled) for MT training.
 Learning rate was generally found to be optimal around \num{1e-3}.
 
 Another difference in the setup is the augmentation pipeline, which is similar to the Cityscapes pipeline, but replaces the RGB-shift with gaussian noise, since the vapour dataset contains greyscale images. The gaussian noise might also be able to mimic some of the noise the camera produces, so it seems like an adequate replacement.
+
 Furthermore, we also explore using \emph{CutMix}\cite{yunCutMixRegularizationStrategy2019} for mixing pseudo labels instead of the CowMask technique used for Cityscapes. 
 CutMix cuts a rectangular region of the image instead of the varying sizes of blobs in the CowMask technique.
-The reason this may be more suitable to the vapour dataset is that the objects in the images are generally quite small, so the CowMask technique, which masks generally smaller regions might not be effective in combining relevant features from the two images. On Cityscapes, CutMix was not attempted since \Citeauthor{schererPseudoLabelNoiseSuppression2022}\cite{schererPseudoLabelNoiseSuppression2022} already concluded that the CowMask technique was superior.
+The reason this may be more suitable to the vapour dataset is that the objects in the images are generally quite small, so the CowMask technique, which masks smaller regions might not be effective in combining relevant features from the two images. On Cityscapes, CutMix is not explored since \Citeauthor{schererPseudoLabelNoiseSuppression2022}\cite{schererPseudoLabelNoiseSuppression2022} already concluded that the CowMask technique is superior.
 
 \paragraph{Results on vapour dataset}
 
+The results of the training on the vapour dataset are shown in Table \ref{tab:vapour_results_mt}. 
+Unfortunately, it does not appear that the MT approach is able to outright improve the performance of the model on the vapour dataset regarding the mIoU.
+
+On average, the the MT approach produces a worse mIoU than the supervised training on the test dataset, although not by a large margin. 
+However, there are some metrics where semi supervised learning does appear to be beneficial, as it achieves the overall best recall and RMRE. 
+
+There are several conjectures as to why the MT approach doesn't produce the desired results.
+
+As mentioned in section \ref{sec:oversampling}, images that do not contain any droplets after splitting have to be filtered out in the supervised training setup to achieve any meaningful results.
+Meanwhile, unlabeled samples that don't contain any droplets are used as normal in the MT setup, which might degrade the performance of the model.
+
+Another possible reason could be that the number of unlabeled samples is too small, which might not be enough to improve the performance of the model in the same way as it does on the Cityscapes dataset.
+
+However, since semi supervised learning is able to improve the performance of the model in several key metrics, it is still beneficial to the overall measurement process.
+If the aforementioned flaws are addressed, further improvement might also be possible.
+
+As for the comparison between the CowMask and CutMix techniques, it appears that CutMix outperforms CowMask for a split factor of 2, but becomes significantly worse for a split factor of 4.
+Since the borders of the mask are more likely to intersect droplets, which take up a larger portion of the image for a higher split factor.
+These kinds of dissected droplets could be too difficult to detect for the model, which would explain the worse performance. 
+
+Generally a split factor of 4 seems to produce better results when using the MT + CowMask, while not having a large impact on supervised training.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{llllllll}
+        \toprule
+        MT            & sf & Loss             & mIoU             & recall           & precision        & RMRE$_\text{c}$   & RMRE$_\text{t}$   \\ \midrule
+        no            & 2  & 0.00090          & \textbf{0.77832} & 0.85333          & \textbf{0.98462} & -0.11194          & -0.11199          \\
+                      & 4  & 0.00074          & 0.77217          & 0.94667          & 0.97260          & -0.10405          & -0.10232          \\ \midrule
+        yes (CowMask) & 2  & 0.00114          & 0.73377          & 0.84667          & 0.91367          & -0.16528          & -0.15719          \\
+                      & 4  & 0.00100          & 0.75464          & \textbf{0.99333} & 0.87135          & \textbf{-0.06566} & -0.05721 \\ \midrule
+        yes (CutMix)  & 2  & \textbf{0.00080} & 0.75884          & \textbf{0.99333} & 0.88690          & -0.07457          & \textbf{-0.05647}          \\
+                      & 4  & 0.00152          & 0.68242          & 1.04000          & 0.74641          & -0.13009          & -0.06471          \\ \bottomrule
+        \end{tabular}
+    \vspace{0.2cm}
+    \caption{Results for the Mean Teacher approach on the vapour dataset. MT indicates wether the MT approach was used and which mixing technique was employed. The table only contains results that weren't pretrained. Bold numbers indicate the overall best performance for the metric. For abbreviations refer to Table \ref{tab:abbreviations}.}
+    \label{tab:vapour_results_mt}
+\end{table}

@@ -23,7 +23,7 @@
 \usepackage{ifthen}                             % more control over non-obligatory parameters
 \usepackage{titling}                            % get title values as macros
 \usepackage[onehalfspacing]{setspace}           % control the spacing between lines and in enumeration lists
-\usepackage[backend=biber, style=phys, biblabel=brackets]{biblatex} % citations with "modern" backend and an physics-accepted citation style
+\usepackage[backend=biber, style=phys, biblabel=brackets, url=true]{biblatex} % citations with "modern" backend and an physics-accepted citation style
 \usepackage{graphicx}                           % work with graphics 
 \usepackage{ragged2e}                           % ragged-commands (when no block format is wanted)
 \usepackage{pdfpages}                           % allows including of pdfs into this pdf
@@ -46,9 +46,9 @@
     \usetikzlibrary{positioning}
 \usepackage[toc, page]{appendix}
 
-\title{Measurement of Droplets in vapourised fluids using Machine Learning Techniques}
+\title{Measurement of Droplets in Vaporized Fluids using Machine Learning Techniques}
 \author{Jan Claar}
-\date{\today}
+\date{March 01, 2023}
 
 \input{texconf/config}                                  % another file that holds the package/document configuration
 \input{texconf/format}                                  % another file that holds format information
@@ -67,10 +67,8 @@
     \label{sec:introduction}
     \input{general/introduction}
 
-    \chapter{Theory}
 
-    \label{sec:theory}
-    \section{Physics}
+    \chapter{Theory from the perspective of Physics}
     \label{sec:theory_physics}
     \input{theory/physics/introduction.tex}
     \input{theory/physics/saw.tex}
@@ -78,7 +76,7 @@
     \input{theory/physics/measurement.tex}
 
     \newpage
-    \section{Computer Science}
+    \chapter{Theory from the perspective of Computer Science}
     \label{sec:theory_compsci}
     \input{theory/compsci/basics/basics.tex}
     \input{theory/compsci/image_segmentation/semanticseg.tex}
@@ -110,6 +108,10 @@
     \input{experiments/mean_teacher_generalization.tex}
     \input{experiments/binary_labels.tex}
     \input{experiments/reduced_layers.tex}
+
+    \chapter{Conclusion}
+    \label{sec:conclusion}
+    \input{general/conclusion.tex}
 
     \input{bibliography.tex}
 

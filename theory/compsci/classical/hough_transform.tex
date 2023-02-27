@@ -1,0 +1,24 @@
+\section{Classical Algorithms: Hough Transform}
+
+The \emph{Hough Transform} is an example of a classical algorithm (meaning not involving the use of machine learning) used in computer vision to solve the problem of line detection.  
+It was invented by Paul Hough \cite{houghMachineAnalysisBubble1959} and further developed by \Citeauthor{dudaUseHoughTransformation1972} \cite{dudaUseHoughTransformation1972} and works by employing a voting procedure in a parameter space to find the most likely lines in an image.
+
+A line can generally be described by the equation 
+$$
+    y = mx + b\quad ,
+$$
+where $m$ is the slope and $b$ is the y-intercept. 
+In the algorithm, we start with an empty accumulator array, each of whose entries corresponds to a combination of discreet values for $m$ and $b$.
+Then we iterate over the image and for each pixel that could be part of a line (decided by e.g. its greyscale value), we vote for all possible lines that could pass through that pixel by incrementing the corresponding entries in the accumulator array.
+The lines with the highest votes are then most likely to be present in the image.
+
+Since a circle can similarly be described by the equation
+$$
+(x - a)^2 + (y - b)^2 = r^2\quad ,
+$$
+where $a,b$ are the $x,y$ coordinates of the center of the circle and $r$ is its radius, the same principle can also be applied to adapt the algorithm to detect circles.
+However, since since the parameter space for circles is 3-dimensional, this becomes very inefficient for large images.
+
+It is possible to improve the efficiency of the algorithm by first calculating the gradient of the image to detect edges and then only voting for points in the direction normal to the edge of the circle \cite{yuenComparativeStudyHough1989,kierkegaardMethodDetectionCircular1992}.
+
+Since droplets are generally circular, applying the Hough transform in some way to detect them might be a good idea.

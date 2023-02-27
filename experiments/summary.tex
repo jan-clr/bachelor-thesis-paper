@@ -1,0 +1,14 @@
+\section{Summary}
+
+To summarize the results of the experiments, the best overall results are achieved by supervised training a model with the number of stages reduced to four on multi-class labels (see section \ref{sec:reduced_layers}).
+
+While semi supervised training does not demonstrate a clear advantage over supervised training when it comes to overall accuracy of the model or the ability to generalize to new data, it does seem to improve the performance of the model in the case of the RMRE metric and shows promise for future improvements if key issues can be resolved (see sections \ref{sec:mean_teacher_general}, \ref{sec:generalization}).
+
+Binary labeling does provide a boost in mIoU for supervised training, but this is not the case for semi supervised training, where the model performs worse than compared to using multi-class labels (see section \ref{sec:binary}).
+Multi-class training also beats binary training when it comes to droplet detection accuracy.
+
+Almost all models predict the droplet radius as slightly too small. Since this is seems to be a general trend, this error could perhaps be addressed on the post-processing side of the algorithm, for example by raising the threshold for including pixel distances in the droplet radius.
+
+When it comes to applying the model to real data, the results can be significantly improved by supplying the model with high quality data, as a lot of the more difficult examples that were included in the test set are produced from highly inconsistent lighting conditions in the images.
+By slightly curating which data is used for measurement, the algorithm can be used to measure droplet size in a reliable way.
+Although doing this means human interference can not be eliminated completely from the process, the application still results in a significant time saving compared to manual measurement.

@@ -81,6 +81,7 @@ The results of the training on the vapour dataset are shown in Table \ref{tab:va
 Unfortunately, it does not appear that the MT approach is able to outright improve the performance of the model on the vapour dataset regarding the mIoU.
 
 On average, the the MT approach produces a worse mIoU than the supervised training on the test dataset, although not by a large margin. 
+It is worth noting that the MT approach does consistently achieve a higher mIoU than the supervised approach on the validation dataset during training, but this doesn't seem to translate to the test dataset.
 However, there are some metrics where semi supervised learning does appear to be beneficial, as it achieves the overall best recall and RMRE. 
 
 There are several conjectures as to why the MT approach doesn't produce the desired results.

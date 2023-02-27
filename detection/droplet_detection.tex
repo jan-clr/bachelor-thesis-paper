@@ -21,7 +21,7 @@ Since droplets have very dark and very bright regions, they produce a high Miche
 Images aren't considered for further processing if $C$ is below a certain threshold.
 The reason artifacts need to be removed is that the they are very dark compared to the background, which means even images without any droplet structures will have a high Michelson contrast.
 
-Lastly, before applying the model to the images, they are normalized to the interval $[0,1]$ using ImageNet mean and standard deviation to match the training augmentations.
+Lastly, before applying the model to the images, they are normalized to have a mean of 0 and a standard deviation of 1 using ImageNet mean and standard deviation to match the training augmentations.
 
 \paragraph{Step 2: Droplet detection} is done by a model trained to identify droplets with dark borders and bright centers as in-focus and segment the images into three classes, \emph{droplet border}, \emph{droplet inside} and \emph{background}.
 Segmenting the images into three classes instead of two is important in the next step, since it helps to detect errors the model made in the segmentation process.

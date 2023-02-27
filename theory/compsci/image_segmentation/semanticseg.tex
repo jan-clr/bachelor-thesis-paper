@@ -1,10 +1,10 @@
 \section{Semantic Image Segmentation}
 \label{sec:imseg}
 
-With the knowledge of how neural networks perform their computation in general we need to think about how a specific task can be accomplished using neural networks.
+With the knowledge of how neural networks perform their computation in general we need to think about how a specific task can be accomplished by them.
 To do this we need to find a specialized representation of the problem which networks can be applied to.
 
-There are several common types of problems within computer vision, that have different kinds of encodings for their solution space. As stated prior, he task which this thesis is trying to solve lies in the category of \emph{Instance Segmentation}, but can be accomplished by instead doing \emph{Semantic Image Segmentation}.
+There are several common types of problems within computer vision that have different kinds of encodings for their solution space. As stated in the introduction, the task which this thesis is trying to solve lies in the category of \emph{Instance Segmentation}, but can be accomplished by instead doing \emph{Semantic Image Segmentation}.
 For this task the network input is an image and the network is supposed to assign each pixel one of a predetermined set of \emph{classes} to which the pixel belongs to. For example in the case of the \emph{Cityscapes Dataset}\cite{cordtsCityscapesDatasetSemantic2016a}, the data consists of images of inner city traffic situations from the perspective of a car, and the classes are subjects like \emph{car}, \emph{road}, \emph{person}, \emph{building} etc.
 
 \begin{figure}[htbp]
@@ -22,12 +22,12 @@ A model for this task would now output a map $O\in\mathbf{R}^{C\times M\times N}
 
 These outputs can now be normalized to probabilities by applying the \emph{softmax} function to them or converted to a segmentation mask by using the \emph{argmax} function.
 
-To evaluate how well a network performs on the segmentation task, the \emph{Intersection over Union} (IoU) for each class is computed, which if $A$ is the set of pixels labeled as a certain class by the network and $B$ the set of pixels which are part of that class in the ground truth is calculated as follows:
+To evaluate how well a network performs on the segmentation task, the \emph{Intersection over Union} (IoU) for each class is computed. For the set $A$ of pixels labeled as a certain class by the network and the set $B$ of pixels which are part of that class in the ground truth the IoU is defined as
 $$
-    \text{IoU} = \frac{\left|A\cap B \,\right|}{\left|A\cup B \,\right|}
+    \text{IoU} = \frac{\left|A\cap B \,\right|}{\left|A\cup B \,\right|}\quad .
 $$
-This metric is very informative to look at per class, but typically the mean over all classes (mIoU) is used to evaluate the model as a whole.\\
+This metric is very informative to look at per class when trying to figure out specific strengths and weaknesses of the model, but typically the mean over all classes (mIoU) is used to evaluate the model as a whole.
 
-A big challenge in developing machine learning solutions to this kind of task is its huge demand for varied data to train models on. High quality annotated data is very time and cost consuming to produce. 
+A big challenge in developing machine learning solutions for this kind of task is its demand for varied data to train models on. High quality annotated data is very time and cost consuming to produce. 
 For example according to the Cityscapes team, one annotated image such as seen in Figure \ref{fig:cityscapes_smpl} took \SI{90}{min} to create. 
 Further in this thesis techniques to mitigate this problem and achieve good results on a small set of annotated data will be discussed.

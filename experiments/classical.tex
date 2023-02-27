@@ -1,0 +1,34 @@
+\section{Employing classical algorithms}
+
+While the main focus of this thesis is on the use of machine learning to detect droplets, it also begs the question whether classical algorithms could be used to achieve similar results without the drawbacks that come with a deep learning approach.
+
+The first idea is to use the Hough transform to detect the circular droplets in the image. 
+The Hough transform is used on the image after it has been preprocessed the same way as in the actual method and applying a gauss filter to smooth out the image \cite{OpenCVFeatureDetection}.
+
+We can compute the same measurement accuracy metrics as for the actual method on the test set, the results of which are shown in Table \ref{tab:results_hough}.
+
+Looking at example images, the Hough transform is indeed able to recognize some of the droplets in the images, however at several points, even very clear droplets are not detected, even though the transform is able to identify very similar instances. 
+Another problem is that the transform also detects a lot of circular structures that do not conform to the in-focus criteria. 
+This is to be expected, as the transform itself does not have a way to distinguish between a droplet that is in focus and one that is not.
+
+To help with this, we can again make use of the high brightness contrast of in focus droplets, by calculating the \emph{Michelson contrast} for only the pixels that are part of the circle and discarding any that are below a certain threshold.
+The higher this threshold is, the more likely it is to also discard in-focus droplets so it is important to strike a balance when choosing this parameter.
+This also only helps with the precision of the method, as the recall is still limited by the fact that the transform is not able to detect all droplets.
+
+Still, the Hough transform method is not able to surpass a recall of 0.7, in which case the precision drops to 0.17, which is not good enough to be used in practice.
+The RMRE is also not very good, but since the control in this test is still performed by applying the original algorithm to the test ground truth, it is best not to pay too much attention to this metric.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{lllll}
+        \toprule
+        contrast threshold & recall  & precision & RMRE$_\text{c}$ & RMRE$_\text{t}$ \\ \midrule
+        -                  & 0.68667 & 0.17311   & -0.19577        & -0.31010       \\
+        0.5                & 0.46667 & 0.66667   & -0.26924        & -0.30075        \\
+        0.4                & 0.55333 & 0.57639   & -0.22304        & -0.27240        \\
+        0.3                & 0.58667 & 0.43564   & -0.21101        & -0.28273        \\ \bottomrule
+    \end{tabular}
+    \vspace{0.2cm}
+    \caption{The results for applying the Hough Transform method to the test data. The contrast threshold is the number the Michelson contrast in a detected circle must surpass to be considered a droplet.}
+    \label{tab:results_hough}
+\end{table}

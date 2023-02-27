@@ -45,6 +45,7 @@
 \usepackage{tikz}                               % Abbildungen zeichnen
     \usetikzlibrary{positioning}
 \usepackage[toc, page]{appendix}
+\usepackage{parskip}
 
 \title{Measurement of Droplets in Vaporized Fluids using Machine Learning Techniques}
 \author{Jan Claar}
@@ -81,6 +82,7 @@
     \input{theory/compsci/basics/basics.tex}
     \input{theory/compsci/image_segmentation/semanticseg.tex}
     \input{theory/compsci/training/training.tex}
+    \input{theory/compsci/classical/hough_transform.tex}
 
     \chapter{Architectures}
     \label{sec:architectures}
@@ -108,6 +110,8 @@
     \input{experiments/mean_teacher_generalization.tex}
     \input{experiments/binary_labels.tex}
     \input{experiments/reduced_layers.tex}
+    \input{experiments/classical.tex}
+    \input{experiments/summary.tex}
 
     \chapter{Conclusion}
     \label{sec:conclusion}

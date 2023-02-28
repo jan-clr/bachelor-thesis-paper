@@ -14,13 +14,11 @@ Because of time constraints, pretraining the reduced model on the Cityscapes dat
 
 The experiment compares the performance with and without semi supervised learning, with a split factor of 2.
 
-Training parameters are the same as in \ref{sec:mean_teacher_general}.
+Training parameters are the same as described in section \ref{sec:mean_teacher_general}.
 
-\paragraph{Results}
+\paragraph{Results} of the experiment are shown in Table~\ref{tab:results_reduced_layers}. Comparison is done with the results of the complete model seen in Table~\ref{tab:vapour_results_mt}.
 
-The results of the experiment are shown in Table~\ref{tab:results_reduced_layers}.
-
-While the complete model still takes the top score when it comes to the mIoU metric (0.784 for supervised training with sf = 2), the top result for the reduced model only lags behind slightly with 0.775 for the same training parameters.
+While the complete model still takes the top score when it comes to the mIoU metric (0.784 for supervised training with sf = 2, see Table~\ref{tab:vapour_results_mt}), the top result for the reduced model only lags behind slightly with 0.775 for the same training parameters (4 stages supervise sf=2, see Table~\ref{tab:results_reduced_layers}).
 
 For the semi-supervised training, the reduced model consistently outperforms the complete model at the mIoU metric, with the only exception being the case where the 4-stage model is trained with sf = 4. 
 

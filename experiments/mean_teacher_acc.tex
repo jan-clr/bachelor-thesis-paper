@@ -82,7 +82,7 @@ Unfortunately, it does not appear that the MT approach is able to outright impro
 
 On average, the the MT approach produces a worse mIoU than the supervised training on the test dataset, although not by a large margin. 
 It is worth noting that the MT approach does consistently achieve a higher mIoU than the supervised approach on the validation dataset during training, but this doesn't seem to translate to the test dataset.
-However, there are some metrics where semi supervised learning does appear to be beneficial, as it achieves the overall best recall and RMRE. 
+However, there are some metrics where semi supervised learning does appear to be beneficial, as it achieves the overall best recall and RMRE (CowMask sf=4 and CutMix sf=2 in Table~\ref{tab:vapour_results_mt}). 
 
 There are several conjectures as to why the MT approach doesn't produce the desired results.
 
@@ -94,8 +94,8 @@ Another possible reason could be that the number of unlabeled samples is too sma
 However, since semi supervised learning is able to improve the performance of the model in several key metrics, it is still beneficial to the overall measurement process.
 If the aforementioned flaws are addressed, further improvement might also be possible.
 
-As for the comparison between the CowMask and CutMix techniques, it appears that CutMix outperforms CowMask for a split factor of 2, but becomes significantly worse for a split factor of 4.
-Since the borders of the mask are more likely to intersect droplets, which take up a larger portion of the image for a higher split factor.
+As for the comparison between the CowMask and CutMix techniques, it appears that CutMix outperforms CowMask for a split factor of 2, but becomes significantly worse for a split factor of 4 (mIou 0.76 vs 0.68).
+The reason for this degradation could be that the borders of the mask are more likely to intersect droplets, which take up a larger portion of the image for a higher split factor.
 These kinds of dissected droplets could be too difficult to detect for the model, which would explain the worse performance. 
 
 Generally a split factor of 4 seems to produce better results when using the MT + CowMask, while not having a large impact on supervised training.

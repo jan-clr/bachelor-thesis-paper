@@ -18,7 +18,7 @@ For this task the network input is an image and the network is supposed to assig
     \label{fig:cityscapes_smpl}
 \end{figure}
 
-A model for this task would now output a map $O\in\mathbf{R}^{C\times M\times N}$ with the same spatial dimensions as the image and a number of channels $C$ equivalent to the number of possible classes. Each output pixel consists of a vector $\mathbf{x}\in \mathbb{R}^C$ where each entry $x_i$ corresponds to how much the network thinks the pixel belongs to class $i$. The channel with the highest value is the class the network has classified the pixel as.
+A model for this task would now output a map $O\in\mathbb{R}^{C\times M\times N}$ with the same spatial dimensions as the image and a number of channels $C$ equivalent to the number of possible classes. Each output pixel consists of a vector $\mathbf{x}\in \mathbb{R}^C$ where each entry $x_i$ corresponds to how much the network thinks the pixel belongs to class $i$. The channel with the highest value is the class the network has classified the pixel as.
 
 These outputs can now be normalized to probabilities by applying the \emph{softmax} function to them or converted to a segmentation mask by using the \emph{argmax} function.
 

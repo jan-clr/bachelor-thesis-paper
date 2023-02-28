@@ -1,8 +1,8 @@
-\section{Employing classical algorithms}
+\section{Employing a classical algorithm}
 
-While the main focus of this thesis is on the use of machine learning to detect droplets, it also begs the question whether classical algorithms could be used to achieve similar results without the drawbacks that come with a deep learning approach.
+While the main focus of this thesis is on the use of machine learning to detect droplets, it also begs the question whether a classical algorithm could be used to achieve similar results without the drawbacks that come with a deep learning approach.
 
-The first idea is to use the Hough transform to detect the circular droplets in the image. 
+The idea is to use the Hough transform to detect the circular droplets in the image. 
 The Hough transform is used on the image after it has been preprocessed the same way as in the actual method and applying a gauss filter to smooth out the image \cite{OpenCVFeatureDetection}.
 
 We can compute the same measurement accuracy metrics as for the actual method on the test set, the results of which are shown in Table \ref{tab:results_hough}.

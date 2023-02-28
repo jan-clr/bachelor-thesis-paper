@@ -1,31 +1,31 @@
 \section{Binary vs. multi-class segmentation}
 \label{sec:binary}
 
-In \ref{sec:algorithm} it's stated that training the model to segment the image into three different classes helps to filter out common model errors in later stages of the measurement algorithm. 
+In section \ref{sec:algorithm} it's stated that training the model to segment the image into three different classes helps to filter out common model errors in later stages of the measurement algorithm. 
 However, introducing a third class also makes the problem more difficult to learn. It could be that training the model on only two classes (background and in-focus droplet) would enable the model to avoid these errors in the first place, since it could learn the criterion for a droplet being in focus more easily.
 
 To test this, the model is trained on the vapour dataset, but with all different droplet labels combined into a single class. The model is then evaluated on the test set that underwent the same transformation. 
 
 During the evaluation process, the filtering step performed by the droplet measurement algorithm is skipped, since the inside labels don't exist anymore. 
 
-Training parameters are the same as in \ref{sec:mean_teacher_general}. The split factor for training is 2.
+Training parameters are the same as described in section \ref{sec:mean_teacher_general}. The split factor for training is 2.
 
-\paragraph{Results}
+\paragraph{Results} are shown in table \ref{tab:binary_labels}.
 
 Surprisingly, when training without MT, binary segmentation doesn't seem to perform worse than multi-class segmentation.
 Since the mIoU is is averaged over two classes instead of three and the IoU for the background class is close to 1, a slightly higher mIoU is expected, but this level of difference is still significant. 
-Supervised binary segmentation also performs reasonably in the other metrics, with the RMRE values surpassing the multi-class results.
+Supervised binary segmentation also performs reasonably in the other metrics.
 
 The story seems to be different when looking at the results of semi supervised trainings. 
 Instead of improving the performance, the mIoU drops significantly in the case of binary segmentation.
 This degradation is most heavily reflected in the precision metric, which drops from 0.89 to 0.39, while recall stays roughly the same.
 This makes semi supervised learning unusable for binary segmentation.
 
-Since better results for recall and precision have been achieved by supervised and semi-supervised multi-class training, approaching the problem as a multi-class segmentation task seems to be the better choice.
+Since better results for recall and precision have been achieved by supervised and semi supervised multi-class training, approaching the problem as a multi-class segmentation task seems to be the better choice and confirms the assumption that additional information for the post processing step is more valuable than a simpler problem.
 
 \begin{table}[htbp]
     \centering
-    \begin{tabular}{@{}llllllll@{}}
+    \begin{tabular}{llllllll}
         \toprule
         \#Classes & MT  & Loss     & mIoU    & recall  & precision & RMRE$_\text{c}$ & RMRE$_\text{t}$ \\ \midrule
         2         & no  & 0.000607 & 0.87815 & 0.88889 & 0.88889   & -0.08282        & -0.04464        \\

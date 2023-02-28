@@ -5,7 +5,8 @@
     twoside=false,                      % if set to true, automatically formats as book style with different left and right pages
     open=right,                         % starting page on twosided texts 
     BCOR=00mm,                          % correction that accounts for the center of the pages being glued in
-    toc=bibliographynumbered            % bibliography gets a number and is listed in the table of contents
+    toc=bibliographynumbered,            % bibliography gets a number and is listed in the table of contents
+    parskip=half,                       % paragraph spacing
 ]{scrreport}
 
 \usepackage[english]{babel}                     % font that supports English
@@ -45,7 +46,7 @@
 \usepackage{tikz}                               % Abbildungen zeichnen
     \usetikzlibrary{positioning}
 \usepackage[toc, page]{appendix}
-\usepackage{parskip}
+%\usepackage{parskip}
 
 \title{Measurement of Droplets in Vaporized Fluids using Machine Learning Techniques}
 \author{Jan Claar}

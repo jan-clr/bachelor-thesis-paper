@@ -3,16 +3,16 @@
 
 For most applications of microparticle aerosols droplet size is a key variable that needs to be controlled precisely to achieve the best results.
 
-For example, in the case of a drug delivery system, the size of the droplet determines the amount of drugs that are absorbed in the lungs, as well as the locations they are deposited in, with smaller droplets reaching more deeply into the lungs, but releasing a smaller amount of drug per unit surface, while larger droplets are more likely to be deposited in the upper airways, but release a larger amount of drug per unit surface area \cite{labirisPulmonaryDrugDelivery2003}.
+For example, in the case of a drug delivery system, the size of the droplet determines the amount of drug that is absorbed in the lungs, as well as the locations it is deposited in, with smaller droplets reaching more deeply into the lungs, but releasing a smaller amount of drug per unit surface, while larger droplets are more likely to be deposited in the upper airways, but release a larger amount of drug per unit surface area \cite{labirisPulmonaryDrugDelivery2003}.
 
-THerefore, when developing such a system accurate measurement of the droplet size is essential. There are a number of techniques that can be used to measure the size of a droplet, but most of them have some drawbacks or are not suitable for use in this particular application. 
+Therefore, when developing such a system accurate measurement of the droplet size is essential. There are a number of techniques that can be used to measure the size of a droplet, but most of them have some drawbacks or are not suitable for use in this particular application. 
 This section gives an overview on the most common techniques as well as our method.
 
-\paragraph{Laser diffraction techniques} make use of the fact that the diffraction angle of light passing a sphere is proportional to the diameter of the sphere, with large particles scattering the light at smaller angles and smaller particles scattering the light at larger angles, according to \emph{Mie theory} for electromagnetic wave scattering \cite{drakeMieScattering1985,wriedtMieTheoryReview2012}.
+\paragraph{Laser diffraction techniques} make use of the fact that the diffraction angle of light passing a sphere is inversely proportional to the diameter of the sphere, with large particles scattering the light at smaller angles and smaller particles scattering the light at larger angles, according to \emph{Mie theory} for electromagnetic wave scattering \cite{drakeMieScattering1985,wriedtMieTheoryReview2012}.
 
 Devices pass a laser beam through the vapour and record the angular scattering intensity, which is then analyzed to calculate the size of the particles. 
 
-Theoretically, laser diffraction techniques are very accurate and able to measure particles as small as \SI{0.1}{\micro\meter} and have been used to measure SAW atomized particle distributions previously. 
+Theoretically, laser diffraction techniques are very accurate and able to measure particles as small as \SI{0.1}{\micro\meter} and have been used to measure SAW atomized particle distributions previously \cite{aishaqiInvestigationSAWAtomization2009}. 
 However, a company which is in a cooperative relationship with our institute for the purpose of researching SAW atomization has reported inconsistencies in their use of a commercially available device, which is why we have chosen to investigate other techniques.
 Another reason for choosing other techniques is the potentially prohibitive pricing of the laser diffraction devices in this stage of the research.
 
@@ -25,7 +25,7 @@ PDPA is a very accurate technique, but requires very large and specialized equip
 It is also known to produce inaccurate readings for inhomogeneous particles or other disturbances in the measurement environment, which requires a more complicated set up \cite{sijsDropSizeMeasurement2021}.
 
 \paragraph{Image Analysis} 
-The technique used during research up until this point employs a more pragmatic approach. A high speed camera in combination with a microscope objective lens and a parallel light source is used to record images of the aerosolized particles as they are being produced. The images were then analyzed manually one by one to determine the size of the particles. While being very flexible and easy to calibrate, this is an extremely tedious and time consuming process, since each droplet has to be measured individually.
+The technique used during our research up until this point employs a more pragmatic approach. A high speed camera in combination with a microscope objective lens and a parallel light source is used to record images of the aerosolized particles as they are being produced. The images were then analyzed manually one by one to determine the size of the particles. While being very flexible and easy to calibrate, this is an extremely tedious and time consuming process.
 
 This is the aspect of the research that this thesis aims to improve upon by utilizing machine learning techniques to automate the process of droplet identification and subsequent size measurement.
 
@@ -33,5 +33,5 @@ Using this kind of image analysis method is not unprecedented, as \Citeauthor{si
 However, they do not disclose the details of their image processing pipeline, making it unclear if they employ machine learning models for this purpose.
 While the idea behind their approach seems to be similar, \Citeauthor{sijsDropSizeMeasurement2021} report a minimum droplet size of \SI{150}{\micro\meter} for their technique, which is one to two orders of magnitudes larger than our expected droplet size of \SIrange{1}{30}{\micro\meter}.
 As a result, their images seem to have much less noise and uneven lighting conditions, which makes droplet identification easier.
-The method used in this thesis is therefore more applicable to the kind of images that we are working with, but could be used for the same purpose when measuring larger droplets.
+Our method should therefore be more applicable to the kind of images that we are working with, but could be used for the same purpose when measuring larger droplets.
 

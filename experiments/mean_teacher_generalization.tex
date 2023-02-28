@@ -5,21 +5,21 @@ Another hope for the MT approach is that it will be able to improve the generali
 
 To explore this, two subsets (S1 and S2) of the vapour datasets with different parameters are used to create two new datasets (DS1 and DS2). DS1 contains the labeled samples from S1 as well as samples from S2 with the labels removed. DS2 is built in the same way, but with S2 as the labeled dataset and S1 as the unlabeled dataset.
 
-The model is then trained on one of the two datasets (DS1 or DS2) and evaluated on the validation set of the other dataset (DS2 or DS1), once with only the labeled samples and once with the unlabeled samples using MT. This is repeated for both datasets, so that one model is trained on either dataset. 
+The model is then trained on one of the two datasets (DS1 or DS2) and evaluated on the validation set of the subset that was not included as labeled data (S2 or S1). Training is done once with only the labeled samples and once with the unlabeled samples using MT. This is repeated for both datasets, so that one model is trained on either dataset. 
 
-To avoid adapting the model purely to one subset, the test set is used for validation during training. 
+To avoid adapting the model purely to one subset, the original test set is used for validation during training. 
 
 A similar number of labeled ($\sim 30$) and unlabeled ($\sim 150$) samples are used for each dataset, so that the model is trained on the same number of samples in total.
 
 If including the unlabeled samples from S2 helps the model improve on the test set of S2 compared to only having seen the labeled samples from S1 (and vice versa), it would indicate that the MT method does indeed help the model generalize without new labeled data.
 
-Training parameters are the same as in \ref{sec:mean_teacher_general}.
+Training parameters are the same as described in section \ref{sec:mean_teacher_general}.
 
 \paragraph{Results}
 
 The evaluation results are shown in table \ref{tab:generalization}. 
 Unfortunately, the results aren't as conclusive as hoped. 
-While using the unlabeled samples from S1 did help the model improve its mIoU on S1 (results for DS2), the opposite isn't true, with the supervised training on DS1 performing better than the MT training, although not as significantly. 
+While using the unlabeled samples from S1 did help the model improve its mIoU on S1 (results for DS2 in Table~\ref{tab:generalization}), the opposite isn't true, with the supervised training on DS1 performing better than the MT training, although not as significantly. 
 Additionally, in both cases the supervised model performs better in all measurement specific metrics except for the recall.
 
 The reason for this could be that the data from S1 is generally more difficult to segment than the data from S2. 

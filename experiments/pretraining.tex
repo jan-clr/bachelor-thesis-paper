@@ -5,9 +5,9 @@ As mentioned in section \ref{sec:transfer_learning}, besides using a pretrained 
 
 Because the model has already learned some useful features, this could potentially speed up the training process and improve the performance of the model. 
 
-This, the weights of best performing model on Cityscapes (mIoU \num{0.475}) is loaded when starting training, except for the last layer, whose number of output channels is changed to match the number of classes in the droplet dataset.
+For this experiment, the weights of the best performing model on Cityscapes (mIoU \num{0.475}) is loaded when starting training, except for the last layer, whose number of output channels is changed to match the number of classes in the droplet dataset.
 
-\paragraph{Results}
+\paragraph{Results} are displayed in Table~\ref{tab:pretraining}. The comparison is made with the results in Table~\ref{tab:vapour_results_mt}.
 
 Pretraining the model on Cityscapes seems to have the largest impact on the performance of supervised training with a split factor of 2, while only improving the results of semi supervised training by a small margin.
 

@@ -1,15 +1,15 @@
-As stated in the Introduction, the goal of this thesis is to use a neural network to identify the droplets in the captured image data to measure their size. 
+As stated in the introduction, the goal of this thesis is to use a neural network to identify the droplets in the captured image data to measure their size. 
 This problem lies in the domain of \emph{instance level image segmentation}.
 However, since individual droplets almost never overlap and droplets themselves have a relatively uniform shape, as long as we know what kind of object each pixel belongs to we can identify the different droplet instances after inference.
 This allows us to simplify the problem to \emph{semantic segmentation}, which is a much easier task.
 The employed network is a \emph{(Deep-) Convolutional Neural Network} (DCNN). 
 
-In the following section, a brief overview of the basics of neural networks, how they work in general and how they can be adapted to a certain task is given. It also explains some classical image processing techniques that might be used on a problem like this one in the absence of neural networks.
+In the following section, a brief overview of the basics of neural networks, how they work in general and how they can be adapted to a certain task is given. It also explains a classical image processing technique that might be used on a problem like this one in the absence of neural networks.
 
 \section{Basics and building blocks of neural networks}
 \label{sec:building_blocks}
 
-The idea of artificial neural networks came long before the capability to employ them as a tool and stems from research in trying to model a biological neuron's function. Biological nerve cells receive signals from several other neurons and then send their own signal based on the strength of their inputs. Translating this behaviour to a mathematical model brings us to the \emph{single layer perceptron}.
+The idea of artificial neural networks came long before the capability to employ them as a tool and stems from research in trying to model a biological neuron's function \cite{macukowNeuralNetworksState2016}. Biological nerve cells receive signals from several other neurons and then send their own signal based on the strength of their inputs. Translating this behaviour to a mathematical model brings us to the \emph{single layer perceptron}.
 
 \paragraph*{Perceptron}
 
@@ -53,7 +53,7 @@ The perceptron displayed in \ref*{fig:perceptron} computes its output like
 $$
     o = f\left(w_o + \sum_{i} w_i x_i\right)
 $$
-where $f$ is the activation function, which is some differentiable nonlinear function. State of the art networks use mostly the \emph{Rectified Linear Unit} (ReLU) \cite{nairRectifiedLinearUnits2010} as their activation function, which has proven to be preferable to its predecessor, the sigmoid function, and is computed as such:
+where $f$ is the activation function, which is some differentiable nonlinear function. State of the art networks mostly use the \emph{Rectified Linear Unit} (ReLU) \cite{nairRectifiedLinearUnits2010} as their activation function, which has proven to be preferable to its predecessor, the sigmoid function, and is computed as such:
 $$
     \text{ReLU}(x) = \begin{cases}
         x, &x>0\\
@@ -64,7 +64,7 @@ $$
 Naturally, modern networks contain much more than one neuron and instead contain many such nodes, that are interconnected with each other. 
 These neurons are typically organized in \emph{layers} and form, in the case of feedforward networks, an acyclic directed graph, where neurons of one layer are only connected to the neurons in layers further down the pipeline. Often the layers between output layer and input layer are called \emph{hidden layers}, since the intermediate representation of the input data they compute is not immediately of interest.
 
-While a single neuron doesn't have the capability to solve complex problems, it has been show that a network with as little as one fully connected hidden layer (all neurons of the previous layer output to all neurons of the following layer) can function as a \emph{universal approximator} for functions between two Euclidean spaces\cite{hornikMultilayerFeedforwardNetworks1989} or indeed any $L^p$-Space\cite{parkMinimumWidthUniversal2020}. This means if there is a mathematical correlation between our desired input and output, so long as both can be represented in these spaces, we can find a neural network that approximates this correlation very well.
+While a single neuron doesn't have the capability to solve complex problems, it has been shown that networks with as little as one \emph{fully connected} hidden layer (all neurons of the previous layer output to all neurons of the following layer) can function as a \emph{universal approximators} for functions between two Euclidean spaces\cite{hornikMultilayerFeedforwardNetworks1989} or indeed any $L^p$-Space\cite{parkMinimumWidthUniversal2020}. This means if there is a mathematical correlation between our desired input and output, so long as both can be represented in these spaces, we can find a neural network that approximates this correlation very well.
 
 While this is an extraordinary finding, modern neural networks often place much more emphasis on the number of layers (depth) than the number of neurons in one layer (width) of a network, hence the terms \emph{deep learning} or \emph{deep neural networks}, since deep networks are easier to train than wide networks. However, the size of a network's parameters and with that its computational complexity grows fast when using many fully connected layers. One tool that enables the use of very deep networks is the \emph{convolutional layer}.
 
@@ -80,18 +80,18 @@ Similarly to a discrete 2d convolution in mathematics, a convolutional layer in 
     \label{fig:convolution}
 \end{figure}
 
-The example seen in Figure \ref{fig:convolution} shows only one channel and a procedure that employs no padding, leaving the output smaller than the input (called a valid convolution). Other than valid convolutions, padding the input by $\lfloor\frac{k}{2}\rfloor$ or $k - 1$, where $k$ is the size of the kernel, leaves us with a \emph{same} (same size as input) or \emph{full} (larger than input) convolution. Additionally, in reality inputs to a layer often have many channels and the layer should be able to produce an arbitrary amount of output channels. In this case there exists a kernel $K_{\text{in}, \text{out}}$ ($K\in \mathbb{R}^{C_\text{in}\times C_\text{out}\times W_\text{K} \times H_\text{K}}$) for each combination of input channels $C_\text{in}$ and output channels $C_{\text{out}}$ whose convolution results are then added up for each output channel, so that for an input $I\in \mathbb{R}^{C_\text{in}\times W \times H}$ the output $O\in \mathbb{R}^{C_\text{out}\times H' \times W'}$ is calculated like
+The example seen in Figure \ref{fig:convolution} shows only one channel and a procedure that employs no padding, leaving the output smaller than the input (called a \emph{valid convolution}). Other than valid convolutions, padding the input by $\lfloor\frac{k}{2}\rfloor$ or $k - 1$, where $k$ is the size of the kernel, leaves us with a \emph{same} (same size as input) or \emph{full} (larger than input) convolution. Additionally, in reality inputs to a layer often have many channels and the layer should be able to produce an arbitrary amount of output channels. In this case there exists a kernel $K_{\text{in}, \text{out}}$ ($K\in \mathbb{R}^{C_\text{in}\times C_\text{out}\times W_\text{K} \times H_\text{K}}$) for each combination of input channels $C_\text{in}$ and output channels $C_{\text{out}}$ whose convolution results are then added up for each output channel, so that for an input $I\in \mathbb{R}^{C_\text{in}\times W \times H}$ the output $O\in \mathbb{R}^{C_\text{out}\times H' \times W'}$ is calculated like
 $$
     O_j = \sum_{k=1}^{C_\text{in}} K_{k,j} * I_k\quad,
 $$
 where $*$ is the convolution operation. There are other approaches to handle multi channel scenarios, but this is the simplest one and is employed in the thesis.
-Another parameter which is important in the context of convolutions is the \emph{stride}, which determines how many units the kernel is moved over the input in each step. The example shown in Figure~\ref{fig:convolution} has a stride of 1, but often, a stride of 2 or more may be used when utilizing convolutions to downscale inputs.
+Another parameter which is important in the context of convolutions is the \emph{stride}, which determines how many units the kernel is moved in each step. The example shown in Figure~\ref{fig:convolution} has a stride of 1, but often, a stride of 2 or more may be used when utilizing convolutions to downscale inputs.
 
-Using a convolution layer has several advantages over using fully connected layers. Using a convolution is a reduction in \emph{learnable parameters} (see section \ref{sec:training}) over a fully connected layer for identical input and output dimensions. This reduces computational resources required and thereby speeds up training. It introduces the inductive bias that positionally close data points are correlated and relevant to each, which is reasonable especially in tasks concerning computer vision. 
+Using a convolution layer has several advantages over using fully connected layers. Using a convolutional layer is a reduction in \emph{learnable parameters} (see section \ref{sec:training}) for identical input and output dimensions. This reduces computational resources required and thereby speeds up training. It introduces the inductive bias that positionally close data points are correlated and relevant to each other, which is reasonable especially in tasks concerning computer vision. 
 
-For example, take a model that tries to detect circles in an image. It makes sense to assume that features which make up a circle are positionally close to each other. Convolutions are also translationally invariant, because they use the same kernel at each position of the images, regardless of the position. 
-In this example that means that for two identical circles at different locations in the input, the identical output is produced at their corresponding position, which is not the case for fully connected layers, where very different weights might me learned for different positions in the picture if data is insufficiently random.
+For example, take a model that tries to detect circles in an image. It makes sense to assume that features which make up a circle are located closely to each other. Convolutions are also translationally invariant, because they use the same kernel weight for the entire image, regardless of the position. 
+In this example that means that for two identical circles at different locations in the input, the identical output is produced at their corresponding position, which is not the case for fully connected layers, where very different weights might me learned for different positions in the picture.
 
 Many architectures in the computer vision field now purely employ convolutional layers (\emph{fully convolutional neural networks}) or use very few fully connected layers only to compute the final output of the network at the end. 
 
-There are additional constructs that can be used in neural networks, such as \emph{pooling} layers, which also move a kernel over the input like a convolution, but instead take the average or maximum of the covered elements as their output. As such, the pooling layer contains no learnable parameters. They are generally used to reduce the dimensions of the feature map to further speed up training time and make the model more stable by promoting invariance to small perturbations in the input and increasing the receptive field of a neuron.
+There are additional constructs that can be used in neural networks, such as \emph{pooling} layers, which also move a kernel over the input like a convolution, but instead take the average or maximum of the covered elements as their output. As such, the pooling layer contains no learnable parameters. They are generally used to reduce the dimensions of the feature map to further speed up training time and make the model more stable by promoting invariance to small perturbations in the input as well as increasing the receptive field of the neurons.

@@ -16,11 +16,11 @@ Although there are more sophisticated approaches to oversampling \cite{ReviewImb
 Since droplets are distributed very sparsely in the data, when splitting the images into smaller samples, a lot of the splits will not contain any droplets. 
 Instead of including these empty regions in the training set, they are discarded when the split images are created.
 Doing this changes the label distribution to \SI{99.84}{\percent} background, \SI{
-0.116}{\percent} droplet border and \SI{0.044}{\percent} droplet inside, which doesn't appear to be much better than the original distribution, but roughly doubles the occurence rate of the droplet classes. 
+0.116}{\percent} droplet border and \SI{0.044}{\percent} droplet inside, which doesn't appear to be much better than the original distribution, but roughly doubles the occurrence rate of the droplet classes. 
 This alone is enough to allow the model to learn to detect droplets with good accuracy.
 
 To take this further, instead of splitting the image dimensions by two they could also be split by a larger factor, which would increase the relative density of droplets in the samples even more.
-The results of this are shown in each experiment seperately, since the same split factor might not work well for all approaches.
+The results of this are shown in each experiment separately, since the same split factor might not work well for all approaches.
 No split factors larger than 4 were tested, since images would become very small and split droplets into different samples more often, which might also be detrimental. 
 
 No further comparative studies were conducted to determine the optimal split factor or the best way to apply oversampling, since the results of this simple approach were already good enough to be used in the thesis.

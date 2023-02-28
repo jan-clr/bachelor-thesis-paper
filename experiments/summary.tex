@@ -9,6 +9,10 @@ Multi-class training also beats binary training when it comes to droplet detecti
 
 Almost all models predict the droplet radius as slightly too small. Since this is seems to be a general trend, this error could perhaps be addressed on the post-processing side of the algorithm, for example by raising the threshold for including pixel distances in the droplet radius.
 
+Applying a classical image processing algorithm to the problem is able to achieve some results, but ultimately fails to perform well because of its inability to differentiate between in-focus and out-of-focus droplets in a nuanced way as well ad detect droplets that don't have a clear boundary.
+
 When it comes to applying the model to real data, the results can be significantly improved by supplying the model with high quality data, as a lot of the more difficult examples that were included in the test set are produced from highly inconsistent lighting conditions in the images.
 By slightly curating which data is used for measurement, the algorithm can be used to measure droplet size in a reliable way.
 Although doing this means human interference can not be eliminated completely from the process, the application still results in a significant time saving compared to manual measurement.
+
+To demonstrate the effectiveness of the technique, some of the instance of the techniques's performance on example image data can be seen in the appendix in Figure~\ref{fig:example_images}.

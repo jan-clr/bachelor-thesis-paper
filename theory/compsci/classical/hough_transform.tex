@@ -16,7 +16,7 @@ Since a circle can similarly be described by the equation
 $$
 (x - a)^2 + (y - b)^2 = r^2\quad ,
 $$
-where $a,b$ are the $x,y$ coordinates of the center of the circle and $r$ is its radius, the same principle can also be applied to adapt the algorithm to detect circles.
+where $a,b$ are the x,y-coordinates of the center of the circle and $r$ is its radius, the same principle can also be applied to adapt the algorithm to detect circles.
 However, since since the parameter space for circles is 3-dimensional, this becomes very inefficient for large images.
 
 It is possible to improve the efficiency of the algorithm by first calculating the gradient of the image to detect edges and then only voting for points in the direction normal to the edge of the circle \cite{yuenComparativeStudyHough1989,kierkegaardMethodDetectionCircular1992}.

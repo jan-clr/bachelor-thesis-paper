@@ -1,4 +1,4 @@
-Before discussing the experiments conducted in this work, it is important to understand in which context the final model will be used to process experimental data. As well as the limitations of the model and the experimental setup.
+Before discussing the experiments conducted in this work, it is important to understand in which context the final model will be used to process experimental data. The following section also discusses the limitations of the model and the experimental setup.
 
 \section{Detection and measurement algorithm}
 \label{sec:algorithm}
@@ -8,7 +8,7 @@ The measurement process consists of several steps, each employing different tech
 \paragraph{Step 1: Image preprocessing} is done on the raw image data. This step is done to improve visibility of the droplets in the image and make a first guess as to which images actually contain droplets. 
 The preprocessing is done batched by calculating the mean image $\mathbf{m}\in\mathbb{R}^{H\times W}$ as well as the mean greyscale value $\mu\in\mathbb{R}$ of the batch $\mathbf{B}\in\mathbb{R}^{N\times H\times W}$, subtracting $\mathbf{m}$ from each image in the batch, adding $\mu$ to each pixel and then mapping the resulting values to the interval $[0,255]$.
 This process must be done batched because of memory constraints, but batching the images also has the advantage that images in one batch are more likely to be similar to each other in terms of lighting conditions, which makes the output more consistent.
-This only applies if the images are taken in one measurement run.
+This only applies if the images are taken in one measurement run, which is the intended use case.
 
 The mean image subtraction is done to remove camera and lens artifacts such as hot pixels or dust from the images.
 This is not primarily done to improve the models detection accuracy, but in order to filter out images that are not suitable for further processing.
@@ -23,19 +23,21 @@ The reason artifacts need to be removed is that the they are very dark compared 
 
 Lastly, before applying the model to the images, they are normalized to have a mean of 0 and a standard deviation of 1 using ImageNet mean and standard deviation to match the training augmentations.
 
+Training data underwent the same preprocessing steps.
+
 \paragraph{Step 2: Droplet detection} is done by a model trained to identify droplets with dark borders and bright centers as in-focus and segment the images into three classes, \emph{droplet border}, \emph{droplet inside} and \emph{background}.
-Segmenting the images into three classes instead of two is important in the next step, since it helps to detect errors the model made in the segmentation process.
+Segmenting the images into three classes instead of two is important in the next step, since it helps to detect errors the model makes in the segmentation process.
 
 Details on model training and evaluation can be found in section \ref{sec:experiments}.
 
 \paragraph{Step 3: Droplet measurement} is done by first grouping all adjacent pixels labeled as \emph{droplet border} in the segmented image to distinct instances. 
 This is essentially done by choosing a starting pixel with the correct label and scanning its neighboring pixels to find all pixels that are also labeled as \emph{droplet border}.
 This step is repeated for this new set of pixels until no more pixels with the correct label can be found.
-The process starts again for a new pixel that has not been assigned to a droplet yet, until all labeled pixels have been precessed.
-The library \emph{scikit-image}\cite{waltScikitimageImageProcessing2014} is used to do this which employs several tricks to speed up this process \cite{wuOptimizingConnectedComponent2005}. 
+The process starts again for a new pixel that has not been assigned to a droplet yet, until all labeled pixels have been processed.
+The library \emph{scikit-image}\cite{waltScikitimageImageProcessing2014} used to accomplish this employs several tricks to speed up this process \cite{wuOptimizingConnectedComponent2005}. 
 
 As a first filtering step, all areas that are smaller than a certain threshold are now discarded, since no droplets below a certain size can be expected to fit the criteria for being in focus.
-For each remaining area, the locations of all pixels is averaged to locate the center of the droplet.
+For each remaining area, the locations of all pixels are averaged to locate the center of the droplet.
 Since the droplet is approximately circular, the average distance of all pixels from the center is calculated and used as a measure for the radius of the droplet.
 Because the border of the droplet has a certain width and labels sometimes extend beyond the actual droplet, only the values between the 80th and 95th percentile of the distances are used to calculate the radius.
 
@@ -47,7 +49,7 @@ In this section, the most common errors are discussed and possible solutions are
 
 \paragraph{The model labels an out of focus droplet or other noise partially with border and center labels.}
 \label{sec:partially_wrong}
-This is the most common error observed when applying the model to experimental data examples for which can be seen in \ref{fig:partially_wrong}.
+This is the most common error observed when applying the model to experimental data, examples for which can be seen in Figure~\ref{fig:partially_wrong}.
 The model will assign a border label to the dark pixels of an out of focus droplet or a center label to brighter areas of the image that are not part of a droplet, possibly even both for the same structure.
 However, this will very rarely happen in a way in which the border region completely surrounds the center region in a closed shape, which can be used to filter out these errors.
 
@@ -72,9 +74,9 @@ This method of filtering works very well for any but the most extreme cases and 
 \paragraph{The model labels an out of focus droplet or other noise completely with border and center labels.}
 
 This is a much rarer error than the one described in the previous paragraph, but it can still happen. 
-It is mostly encountered when the image is very dark overall, which ironically causes the preprocessing step described in \ref{sec:algorithm} to produce bright artifacts in such images, instead of removing dark spots. 
+It is mostly encountered when the image is very dark overall, which ironically causes the preprocessing step described in section \ref{sec:algorithm} to produce bright artifacts in such images, instead of removing dark spots. 
 One example of such an image can be seen in Figure~\ref{fig:totally_wrong_a}.
-Since identifies in focus droplets by their bright center, this behaviour is not completely unexpected.
+Since the model identifies in-focus droplets by their bright center, this behaviour is not completely unexpected.
 
 However, very rarely the model will assign a false positive even to an area which is not significantly brighter than the background, as can be seen in Figure~\ref{fig:totally_wrong_b}.
 
@@ -99,7 +101,7 @@ However, very rarely the model will assign a false positive even to an area whic
                 \includegraphics[width=0.45\textwidth]{images/bad3_mask.png}
             \end{tabular}
         }
-        \caption{The model indentifying a comparatively brighter spot as a droplet.}
+        \caption{The model identifying a comparatively brighter spot as a droplet.}
         \label{fig:totally_wrong_b}
     \end{subfigure}
     \vspace{0.2cm}
@@ -121,7 +123,7 @@ To instead make the model more robust to these kinds of artifacts, some kind of 
 
 \paragraph{Very fast droplets} that travel a significant distance in the time it takes to expose the image (inv. proportional to \emph{shutter speed}) appear as streaks instead of circles. 
 Since the model is trained to identify droplets that are ellipsoidal in shape, it won't be able to label those streaks correctly.
-The shape of these streaks is also much less distinct than the shape of the droplets, which makes it harder to say if the streak is in focus or not.
+The structure of these streaks is also much less distinct than the structure of the droplets, which makes it harder to say if a streak is in focus or not.
 
 Up to a point, this can be mitigated by increasing the shutter speed during image capturing, however this will also decrease the amount of light that reaches the camera, making the images darker overall, so depending on the lighting conditions, this may not be a viable option.
 
